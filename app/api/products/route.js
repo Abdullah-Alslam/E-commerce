@@ -24,11 +24,12 @@ export async function POST(req) {
     });
 
     return NextResponse.json(newProduct, { status: 201 });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to add product" },
       { status: 500 }
     );
   }
 }
+
