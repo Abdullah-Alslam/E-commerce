@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { FiPhone, FiMessageCircle, FiSend } from "react-icons/fi";
 import axios from "axios";
@@ -19,12 +20,22 @@ export default function ContactUs() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     setStatus("");
+
+    // Email validation
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setStatus("❌ Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
     try {
       await axios.post("/api/contact", formData);
       setStatus("✅ Your message has been sent!");
       setFormData({ name: "", email: "", subject: "", message: "" });
+
+      // Scroll to top after successful submit
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.log(err);
       setStatus("❌ Something went wrong. Try again!");
@@ -98,21 +109,22 @@ export default function ContactUs() {
           </button>
 
           {status && (
-            <p
-              className={`text-center font-medium ${
-                status.includes("✅") ? "text-green-600" : "text-red-600"
+            <div
+              className={`p-3 rounded-lg text-center font-medium ${
+                status.includes("✅")
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
               }`}
             >
               {status}
-            </p>
+            </div>
           )}
         </form>
 
         {/* Contact Info */}
         <div className="flex flex-col justify-center space-y-6 text-lg bg-gray-50 p-6 rounded-xl">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Get in Touch</h2>
-          
-          {/* Interactive Links */}
+
           <a
             href="tel:+963991566773"
             className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition"
