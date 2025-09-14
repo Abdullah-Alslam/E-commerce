@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +19,8 @@ export default function LoginPage() {
 
     try {
       const res = await axios.post("/api/login", { email, password });
-
-      if (res.status === 200) {
-        localStorage.setItem("token", res.data.token);
-        router.push("/dashboard"); // غيّر حسب الصفحة الرئيسية بعد login
-      }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError(err.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);
@@ -36,7 +30,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 p-4">
       <div className="bg-gray-800 p-10 rounded-2xl shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center text-white">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-white">
+          Login
+        </h2>
 
         {error && <p className="text-red-500 mb-3 text-center">{error}</p>}
 

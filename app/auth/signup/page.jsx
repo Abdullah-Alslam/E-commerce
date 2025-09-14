@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +37,6 @@ export default function SignupPage() {
 
       if (res.status === 201) {
         setSuccess("User registered successfully! Redirecting to login...");
-        setTimeout(() => router.push("/login"), 1500);
       }
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
@@ -56,7 +53,9 @@ export default function SignupPage() {
         </h2>
 
         {error && <p className="text-red-500 mb-3 text-center">{error}</p>}
-        {success && <p className="text-green-500 mb-3 text-center">{success}</p>}
+        {success && (
+          <p className="text-green-500 mb-3 text-center">{success}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Full Name */}
