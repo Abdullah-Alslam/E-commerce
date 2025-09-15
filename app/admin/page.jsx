@@ -23,7 +23,7 @@ export default function AdminDashboard() {
 
   async function fetchProducts() {
     try {
-      const res = await axios.get("/api/products/category");
+      const res = await axios.get("/api/products");
       setProducts(res.data);
     } catch (err) {
       console.error("❌ Error fetching products:", err);

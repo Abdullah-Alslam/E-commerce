@@ -6,18 +6,19 @@ import { useEffect, useState } from "react";
 export default function LaptopsPage() {
   const [laptops, setLaptops] = useState([]);
 
-  // إذا بدك تجيب المنتجات مباشرة عند تحميل الصفحة
+  // جلب المنتجات عند تحميل الصفحة
   useEffect(() => {
     fetchLaptops();
   }, []);
 
   async function fetchLaptops() {
     try {
-      const res = await axios.get("/api/products/category");
+      const res = await axios.get(`/api/products?category=laptops`);
       console.log("API response:", res.data);
       setLaptops(res.data);
+      
     } catch (err) {
-      console.log(err);
+      console.log("Error fetching laptops:", err);
     }
   }
 
@@ -38,8 +39,14 @@ export default function LaptopsPage() {
               Show Laptops
             </button>
           </div>
+
+          {/* صورة لابتوب بدل المربع */}
           <div className="md:w-1/2 flex justify-center">
-            <div className="w-80 h-80 bg-gray-300 rounded-xl"></div>
+            <img
+              src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+              alt="Laptop"
+              className="w-80 h-80 object-cover rounded-xl shadow-lg"
+            />
           </div>
         </div>
       </section>
@@ -53,14 +60,29 @@ export default function LaptopsPage() {
           <p className="text-gray-600">No laptops available</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {laptops.map((laptop, idx) => (
+            {laptops.map((laptop) => (
               <div
-                key={idx}
+                key={laptop._id}
                 className="bg-white hover:bg-yellow-400 transition rounded-xl p-4 flex flex-col items-center shadow-md"
               >
-                <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
+                {/* صورة المنتج */}
+                {laptop.image ? (
+                  <img
+                    src={laptop.image}
+                    alt={laptop.name}
+                    className="w-full h-48 object-cover rounded mb-4"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
+                )}
+
+                {/* اسم المنتج */}
                 <h3 className="text-lg font-semibold mb-1">{laptop.name}</h3>
+
+                {/* السعر */}
                 <p className="text-gray-700 mb-2">${laptop.price}</p>
+
+                {/* زر الإضافة إلى السلة */}
                 <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-semibold transition">
                   Add to Cart
                 </button>
