@@ -1,5 +1,6 @@
 import connectDB from "@/lib/mongodb";
 import Product from "../../models/Products";
+import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
