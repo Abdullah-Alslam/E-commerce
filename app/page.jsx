@@ -1,5 +1,5 @@
 "use client";
-import ImageUploader from "./components/ImageUploader";
+import ImageUploader from "./admin/ImageUploader";
 export default function HomePage() {
   return (
     <div className="bg-gray-50 text-gray-900 min-h-screen">
