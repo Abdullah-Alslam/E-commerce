@@ -1,57 +1,46 @@
-import connectMongo from "@/lib/mongodb";
-import { NextResponse } from "next/server";
+import connectDB from "@/lib/mongodb";
 import Product from "../../models/Products";
-import { Buffer } from "buffer";
+
+export async function GET(req) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get("category");
+
+    const query = category ? { category } : {};
+    const products = await Product.find(query).sort({ createdAt: -1 });
+
+    return NextResponse.json(products, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
 
 export async function POST(req) {
   try {
-    await connectMongo();
+    await connectDB();
+    const body = await req.json();
+    const { name, price, description, image, category } = body;
 
-    const formData = await req.formData();
-    const name = formData.get("name");
-    const price = formData.get("price");
-    const category = formData.get("category");
-    const specs = formData.get("specs");
-    const imageFile = formData.get("image");
-
-    if (!name || !price || !category || !specs || !imageFile) {
+    if (!name || !price || !image || !category) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
-
-    const newProduct = await Product.create({
+    const product = await Product.create({
       name,
       price,
+      description,
+      image,
       category,
-      specs,
-      image: imageBuffer,
     });
-
-    return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
-    console.error("❌ API Error:", error);
-    return NextResponse.json(
-      { error: "Failed to add product" },
-      { status: 500 }
-    );
-  }
-}
-
-// GET all products
-export async function GET() {
-  try {
-    await connectMongo();
-    const products = await Product.find().sort({ createdAt: -1 });
-    return NextResponse.json(products, { status: 200 });
-  } catch (error) {
-    console.error("❌ API GET Error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch products" },
-      { status: 500 }
-    );
+    return NextResponse.json(product, { status: 201 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
