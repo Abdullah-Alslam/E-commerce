@@ -13,7 +13,7 @@ export default function LaptopsPage() {
 
   async function fetchLaptops() {
     try {
-      const res = await axios.get(`/api/products?category=laptops`);
+      const res = await axios.get(`/api/products`);
       console.log("API response:", res.data);
       setLaptops(res.data);
       

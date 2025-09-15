@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import AddProduct from "./AddProduct";
-import ManageProducts from "./MangeProducts";
 import Sidebar from "./Sidebar";
-
+import AddProduct from './AddProduct'
+import ManageProducts from "./MangeProducts";
 export default function AdminPage() {
   const [section, setSection] = useState("add"); // "add" أو "manage"
 

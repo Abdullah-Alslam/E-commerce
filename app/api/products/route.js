@@ -1,20 +1,19 @@
 import connectDB from "@/lib/mongodb";
-import Product from "../../models/Products";
 import { NextResponse } from "next/server";
+import Product from "../../models/Products";
 
 export async function GET(req) {
   try {
     await connectDB();
+    console.log("MongoDB connected ✅");
 
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category");
-
-    const query = category ? { category } : {};
-    const products = await Product.find(query).sort({ createdAt: -1 });
+    // استعلام جميع المنتجات بدون فلترة
+    const products = await Product.find().sort({ createdAt: -1 });
+    console.log("Products fetched:", products.length);
 
     return NextResponse.json(products, { status: 200 });
   } catch (err) {
-    console.error(err);
+    console.error("API Error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
