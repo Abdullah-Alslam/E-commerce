@@ -1,6 +1,6 @@
 import connectDB from "@/lib/mongodb";
-import Wishlist from "@/models/Wishlist";
 import { NextResponse } from "next/server";
+import Wishlist from "../../models/Wishlist";
 
 connectDB();
 
