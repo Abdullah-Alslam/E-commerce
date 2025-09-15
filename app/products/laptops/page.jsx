@@ -1,26 +1,45 @@
 "use client";
-
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ShoppingCart, Heart, X } from "lucide-react";
+import Link from "next/link";
 
 export default function LaptopsPage() {
   const [laptops, setLaptops] = useState([]);
+  const [search, setSearch] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
-  // جلب المنتجات عند تحميل الصفحة
   useEffect(() => {
     fetchLaptops();
   }, []);
 
   async function fetchLaptops() {
     try {
-      const res = await axios.get(`/api/products/category/Laptops`);
-      console.log("API response:", res.data);
+      const res = await axios.get("/api/products/category/Laptops");
       setLaptops(res.data);
-      
     } catch (err) {
       console.log("Error fetching laptops:", err);
     }
   }
+
+  function resetFilters() {
+    setSearch("");
+    setMinPrice("");
+    setMaxPrice("");
+  }
+
+  const filteredLaptops = laptops.filter((item) => {
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const min = minPrice ? Number(minPrice) : 0;
+    const max = maxPrice ? Number(maxPrice) : Infinity;
+    const matchesPrice = item.price >= min && item.price <= max;
+
+    return matchesSearch && matchesPrice;
+  });
 
   return (
     <div className="bg-gray-50 text-gray-900 min-h-screen">
@@ -40,7 +59,6 @@ export default function LaptopsPage() {
             </button>
           </div>
 
-          {/* صورة لابتوب بدل المربع */}
           <div className="md:w-1/2 flex justify-center">
             <img
               src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
@@ -51,63 +69,95 @@ export default function LaptopsPage() {
         </div>
       </section>
 
-      {/* Laptop Products */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
+      {/* Search + Filter */}
+      <section className="max-w-7xl mx-auto px-6 py-10">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+          {/* البحث */}
+          <div className="flex items-center gap-2 w-full md:w-auto md:ml-auto">
+            <input
+              type="text"
+              placeholder="🔍 Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full md:w-72"
+            />
+          </div>
+
+          {/* الفلترة */}
+          <div className="flex gap-4 items-center">
+            <input
+              type="number"
+              placeholder="Min Price"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              className="border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-32"
+            />
+            <input
+              type="number"
+              placeholder="Max Price"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              className="border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-32"
+            />
+            <button
+              onClick={resetFilters}
+              className="flex items-center gap-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+            >
+              <X size={16} /> Reset
+            </button>
+          </div>
+        </div>
+
         <h2 className="text-3xl font-bold text-blue-500 mb-10">
           Laptops Collection
         </h2>
-        {laptops.length === 0 ? (
+
+        {filteredLaptops.length === 0 ? (
           <p className="text-gray-600">No laptops available</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {laptops.map((laptop) => (
+            {filteredLaptops.map((laptop) => (
               <div
                 key={laptop._id}
-                className="bg-white hover:bg-yellow-400 transition rounded-xl p-4 flex flex-col items-center shadow-md"
+                className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition flex flex-col"
               >
-                {/* صورة المنتج */}
-                {laptop.image ? (
-                  <img
-                    src={laptop.image}
-                    alt={laptop.name}
-                    className="w-full h-48 object-cover rounded mb-4"
-                  />
-                ) : (
-                  <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
-                )}
+                {/* صورة المنتج مع الرابط */}
+                <Link href={`/products/${laptop._id}`}>
+                  {laptop.image ? (
+                    <img
+                      src={laptop.image}
+                      alt={laptop.name}
+                      className="w-full h-48 object-cover rounded mb-4 cursor-pointer"
+                    />
+                  ) : (
+                    <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
+                  )}
+                </Link>
 
-                {/* اسم المنتج */}
-                <h3 className="text-lg font-semibold mb-1">{laptop.name}</h3>
+                {/* اسم المنتج مع الرابط */}
+                <Link
+                  href={`/products/${laptop._id}`}
+                  className="hover:underline"
+                >
+                  <h3 className="text-lg font-semibold mb-1">{laptop.name}</h3>
+                </Link>
 
                 {/* السعر */}
-                <p className="text-gray-700 mb-2">${laptop.price}</p>
+                <p className="text-blue-600 font-bold mb-3">${laptop.price}</p>
 
-                {/* زر الإضافة إلى السلة */}
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-semibold transition">
-                  Add to Cart
-                </button>
+                {/* Actions */}
+                <div className="flex justify-between mt-auto">
+                  <button className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition">
+                    <ShoppingCart size={18} />
+                  </button>
+                  <button className="p-2 bg-gray-200 text-red-500 rounded-full hover:bg-red-400 hover:text-white transition">
+                    <Heart size={18} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-gray-100 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          {[
-            { title: "Free Shipping", desc: "On all laptops over $1000" },
-            { title: "24/7 Support", desc: "We are here to help" },
-            { title: "Secure Payment", desc: "100% secure payment" },
-          ].map((f, idx) => (
-            <div key={idx} className="p-6 bg-white rounded-xl shadow-md">
-              <h3 className="text-xl font-bold mb-2 text-blue-500">
-                {f.title}
-              </h3>
-              <p className="text-gray-700">{f.desc}</p>
-            </div>
-          ))}
-        </div>
       </section>
     </div>
   );
