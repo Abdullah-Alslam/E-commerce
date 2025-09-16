@@ -1,4 +1,5 @@
 "use client";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ShoppingCart, Heart, X } from "lucide-react";
@@ -9,7 +10,9 @@ export default function LaptopsPage() {
   const [search, setSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [loading, setLoading] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Fetch laptops on component mount
   useEffect(() => {
     fetchLaptops();
   }, []);
@@ -19,7 +22,7 @@ export default function LaptopsPage() {
       const res = await axios.get("/api/products/category/Laptops");
       setLaptops(res.data);
     } catch (err) {
-      console.log("Error fetching laptops:", err);
+      console.error("Error fetching laptops:", err);
     }
   }
 
@@ -30,30 +33,48 @@ export default function LaptopsPage() {
   }
 
   const filteredLaptops = laptops.filter((item) => {
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
+    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
     const min = minPrice ? Number(minPrice) : 0;
     const max = maxPrice ? Number(maxPrice) : Infinity;
     const matchesPrice = item.price >= min && item.price <= max;
-
     return matchesSearch && matchesPrice;
   });
+
+  // Add product to wishlist
   async function addToWishlist(product) {
     try {
       setLoading(true);
       const res = await axios.post("/api/wishlist", {
-        productId: product._id,  // من قاعدة بيانات المنتجات
+        productId: product._id,
         name: product.name,
         price: product.price,
         image: product.image,
       });
-      console.log("✅ تمت الإضافة:", res.data);
-      alert("تمت إضافة المنتج إلى المفضلة");
+      console.log("✅ Added to wishlist:", res.data);
+      alert("Product added to wishlist");
     } catch (err) {
-      console.error("❌ خطأ أثناء الإضافة:", err.response?.data || err.message);
-      alert("تعذر إضافة المنتج، حاول لاحقًا");
+      console.error("❌ Error adding to wishlist:", err.response?.data || err.message);
+      alert("Failed to add product, please try again");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Add product to cart
+  async function addToCart(product) {
+    try {
+      setLoading(true);
+      const res = await axios.post("/api/cart", {
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+      });
+      console.log("✅ Added to cart:", res.data);
+      alert("Product added to cart");
+    } catch (err) {
+      console.error("❌ Error adding to cart:", err.response?.data || err.message);
+      alert("Failed to add product, please try again");
     } finally {
       setLoading(false);
     }
@@ -87,10 +108,10 @@ export default function LaptopsPage() {
         </div>
       </section>
 
-      {/* Search + Filter */}
+      {/* Search & Filter Section */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-          {/* البحث */}
+          {/* Search */}
           <div className="flex items-center gap-2 w-full md:w-auto md:ml-auto">
             <input
               type="text"
@@ -101,7 +122,7 @@ export default function LaptopsPage() {
             />
           </div>
 
-          {/* الفلترة */}
+          {/* Price Filter */}
           <div className="flex gap-4 items-center">
             <input
               type="number"
@@ -139,7 +160,7 @@ export default function LaptopsPage() {
                 key={laptop._id}
                 className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition flex flex-col"
               >
-                {/* صورة المنتج مع الرابط */}
+                {/* Product Image */}
                 <Link href={`/products/${laptop._id}`}>
                   {laptop.image ? (
                     <img
@@ -152,20 +173,20 @@ export default function LaptopsPage() {
                   )}
                 </Link>
 
-                {/* اسم المنتج مع الرابط */}
-                <Link
-                  href={`/products/${laptop._id}`}
-                  className="hover:underline"
-                >
+                {/* Product Name */}
+                <Link href={`/products/${laptop._id}`} className="hover:underline">
                   <h3 className="text-lg font-semibold mb-1">{laptop.name}</h3>
                 </Link>
 
-                {/* السعر */}
+                {/* Product Price */}
                 <p className="text-blue-600 font-bold mb-3">${laptop.price}</p>
 
-                {/* Actions */}
+                {/* Action Buttons */}
                 <div className="flex justify-between mt-auto">
-                  <button className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition">
+                  <button
+                    className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+                    onClick={() => addToCart(laptop)}
+                  >
                     <ShoppingCart size={18} />
                   </button>
                   <button
