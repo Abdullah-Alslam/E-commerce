@@ -9,7 +9,7 @@ export default function LaptopsPage() {
   const [search, setSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-
+  const [loading, setLoading] = useState("");
   useEffect(() => {
     fetchLaptops();
   }, []);
@@ -40,6 +40,24 @@ export default function LaptopsPage() {
 
     return matchesSearch && matchesPrice;
   });
+  async function addToWishlist(product) {
+    try {
+      setLoading(true);
+      const res = await axios.post("/api/wishlist", {
+        productId: product._id,  // من قاعدة بيانات المنتجات
+        name: product.name,
+        price: product.price,
+        image: product.image,
+      });
+      console.log("✅ تمت الإضافة:", res.data);
+      alert("تمت إضافة المنتج إلى المفضلة");
+    } catch (err) {
+      console.error("❌ خطأ أثناء الإضافة:", err.response?.data || err.message);
+      alert("تعذر إضافة المنتج، حاول لاحقًا");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="bg-gray-50 text-gray-900 min-h-screen">
@@ -150,7 +168,10 @@ export default function LaptopsPage() {
                   <button className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition">
                     <ShoppingCart size={18} />
                   </button>
-                  <button className="p-2 bg-gray-200 text-red-500 rounded-full hover:bg-red-400 hover:text-white transition">
+                  <button
+                    className="p-2 bg-gray-200 text-red-500 rounded-full hover:bg-red-400 hover:text-white transition"
+                    onClick={() => addToWishlist(laptop)}
+                  >
                     <Heart size={18} />
                   </button>
                 </div>

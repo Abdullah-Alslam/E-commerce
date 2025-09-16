@@ -26,12 +26,11 @@ export default function WishlistPage() {
   async function deleteWishlist(id) {
     try {
       await axios.delete(`/api/wishlist/${id}`);
-      setWishlist(wishlist.filter((item) => item.id !== id));
+      setWishlist(wishlist.filter((item) => item._id !== id)); // ✅ تحديث القائمة
     } catch (err) {
       console.log("Error deleting wishlist item:", err);
     }
   }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -43,7 +42,9 @@ export default function WishlistPage() {
   if (wishlist.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl font-semibold text-gray-700">Your wishlist is empty.</p>
+        <p className="text-xl font-semibold text-gray-700">
+          Your wishlist is empty.
+        </p>
       </div>
     );
   }
@@ -58,7 +59,7 @@ export default function WishlistPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {wishlist.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="bg-white rounded-3xl shadow-2xl overflow-hidden hover:scale-105 transition-transform duration-300 relative"
             >
               {/* Image */}
@@ -70,7 +71,7 @@ export default function WishlistPage() {
 
               {/* Delete Button */}
               <button
-                onClick={() => deleteWishlist(item.id)}
+                onClick={() => deleteWishlist(item._id)}
                 className="absolute top-3 right-3 bg-red-500 text-white rounded-full p-2 shadow-lg hover:bg-red-600 transition"
               >
                 🗑
