@@ -10,6 +10,7 @@ export default function LaptopsPage() {
   const [search, setSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [sortType, setSortType] = useState(""); // ✅ state for sorting
   const [loading, setLoading] = useState(false);
 
   // Fetch laptops on component mount
@@ -30,15 +31,27 @@ export default function LaptopsPage() {
     setSearch("");
     setMinPrice("");
     setMaxPrice("");
+    setSortType("");
   }
 
-  const filteredLaptops = laptops.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
-    const min = minPrice ? Number(minPrice) : 0;
-    const max = maxPrice ? Number(maxPrice) : Infinity;
-    const matchesPrice = item.price >= min && item.price <= max;
-    return matchesSearch && matchesPrice;
-  });
+  // Apply filters
+  const filteredLaptops = laptops
+    .filter((item) => {
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const min = minPrice ? Number(minPrice) : 0;
+      const max = maxPrice ? Number(maxPrice) : Infinity;
+      const matchesPrice = item.price >= min && item.price <= max;
+      return matchesSearch && matchesPrice;
+    })
+    .sort((a, b) => {
+      if (sortType === "price-asc") return a.price - b.price;
+      if (sortType === "price-desc") return b.price - a.price;
+      if (sortType === "name-asc") return a.name.localeCompare(b.name);
+      if (sortType === "name-desc") return b.name.localeCompare(a.name);
+      return 0;
+    });
 
   // Add product to wishlist
   async function addToWishlist(product) {
@@ -53,7 +66,10 @@ export default function LaptopsPage() {
       console.log("✅ Added to wishlist:", res.data);
       alert("Product added to wishlist");
     } catch (err) {
-      console.error("❌ Error adding to wishlist:", err.response?.data || err.message);
+      console.error(
+        "❌ Error adding to wishlist:",
+        err.response?.data || err.message
+      );
       alert("Failed to add product, please try again");
     } finally {
       setLoading(false);
@@ -73,7 +89,10 @@ export default function LaptopsPage() {
       console.log("✅ Added to cart:", res.data);
       alert("Product added to cart");
     } catch (err) {
-      console.error("❌ Error adding to cart:", err.response?.data || err.message);
+      console.error(
+        "❌ Error adding to cart:",
+        err.response?.data || err.message
+      );
       alert("Failed to add product, please try again");
     } finally {
       setLoading(false);
@@ -108,7 +127,7 @@ export default function LaptopsPage() {
         </div>
       </section>
 
-      {/* Search & Filter Section */}
+      {/* Search, Filter & Sort Section */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
           {/* Search */}
@@ -122,7 +141,7 @@ export default function LaptopsPage() {
             />
           </div>
 
-          {/* Price Filter */}
+          {/* Filters */}
           <div className="flex gap-4 items-center">
             <input
               type="number"
@@ -138,6 +157,21 @@ export default function LaptopsPage() {
               onChange={(e) => setMaxPrice(e.target.value)}
               className="border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-32"
             />
+
+            {/* Sorting Dropdown */}
+            <select
+              value={sortType}
+              onChange={(e) => setSortType(e.target.value)}
+              className="border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">Sort By</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A to Z</option>
+              <option value="name-desc">Name: Z to A</option>
+            </select>
+
+            {/* Reset Button */}
             <button
               onClick={resetFilters}
               className="flex items-center gap-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
@@ -174,7 +208,10 @@ export default function LaptopsPage() {
                 </Link>
 
                 {/* Product Name */}
-                <Link href={`/products/${laptop._id}`} className="hover:underline">
+                <Link
+                  href={`/products/${laptop._id}`}
+                  className="hover:underline"
+                >
                   <h3 className="text-lg font-semibold mb-1">{laptop.name}</h3>
                 </Link>
 
