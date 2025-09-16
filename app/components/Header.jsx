@@ -60,10 +60,15 @@ export default function Header() {
             )}
           </div>
 
+          {/* Hot Deals */}
           <Link
-            href="/about"
+            href="/hot-deals"
             className="hover:text-[#2563EB] transition-colors"
           >
+            Hot Deals
+          </Link>
+
+          <Link href="/about" className="hover:text-[#2563EB] transition-colors">
             About
           </Link>
           <Link
@@ -72,10 +77,7 @@ export default function Header() {
           >
             Contact
           </Link>
-          <Link
-            href="/admin"
-            className="hover:text-[#2563EB] transition-colors"
-          >
+          <Link href="/admin" className="hover:text-[#2563EB] transition-colors">
             Admin
           </Link>
         </nav>
@@ -159,12 +161,16 @@ export default function Header() {
               </div>
             )}
           </div>
+
+          {/* Hot Deals */}
           <Link
-            href="/admin"
+            href="/hot-deals"
             className="block hover:text-[#2563EB] transition-colors"
+            onClick={() => setMenuOpen(false)}
           >
-            Admin
+            Hot Deals
           </Link>
+
           <Link
             href="/about"
             className="block hover:text-[#2563EB] transition-colors"
@@ -176,6 +182,12 @@ export default function Header() {
             className="block hover:text-[#2563EB] transition-colors"
           >
             Contact
+          </Link>
+          <Link
+            href="/admin"
+            className="block hover:text-[#2563EB] transition-colors"
+          >
+            Admin
           </Link>
         </nav>
       )}
