@@ -10,10 +10,14 @@ export default function LaptopsPage() {
   const [search, setSearch] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [sortType, setSortType] = useState(""); // ✅ state for sorting
+  const [sortType, setSortType] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Fetch laptops on component mount
+  // ✅ Pagination states
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 12;
+
+  // Fetch laptops
   useEffect(() => {
     fetchLaptops();
   }, []);
@@ -32,9 +36,10 @@ export default function LaptopsPage() {
     setMinPrice("");
     setMaxPrice("");
     setSortType("");
+    setPage(1); // reset to first page
   }
 
-  // Apply filters
+  // Filters + Sort
   const filteredLaptops = laptops
     .filter((item) => {
       const matchesSearch = item.name
@@ -53,7 +58,15 @@ export default function LaptopsPage() {
       return 0;
     });
 
-  // Add product to wishlist
+  // ✅ Pagination logic
+  const totalPages = Math.ceil(filteredLaptops.length / itemsPerPage);
+  const startIndex = (page - 1) * itemsPerPage;
+  const paginatedLaptops = filteredLaptops.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  // Add to Wishlist
   async function addToWishlist(product) {
     try {
       setLoading(true);
@@ -66,17 +79,14 @@ export default function LaptopsPage() {
       console.log("✅ Added to wishlist:", res.data);
       alert("Product added to wishlist");
     } catch (err) {
-      console.error(
-        "❌ Error adding to wishlist:",
-        err.response?.data || err.message
-      );
+      console.error("❌ Error adding to wishlist:", err);
       alert("Failed to add product, please try again");
     } finally {
       setLoading(false);
     }
   }
 
-  // Add product to cart
+  // Add to Cart
   async function addToCart(product) {
     try {
       setLoading(true);
@@ -89,10 +99,7 @@ export default function LaptopsPage() {
       console.log("✅ Added to cart:", res.data);
       alert("Product added to cart");
     } catch (err) {
-      console.error(
-        "❌ Error adding to cart:",
-        err.response?.data || err.message
-      );
+      console.error("❌ Error adding to cart:", err);
       alert("Failed to add product, please try again");
     } finally {
       setLoading(false);
@@ -185,57 +192,84 @@ export default function LaptopsPage() {
           Laptops Collection
         </h2>
 
-        {filteredLaptops.length === 0 ? (
+        {paginatedLaptops.length === 0 ? (
           <p className="text-gray-600">No laptops available</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredLaptops.map((laptop) => (
-              <div
-                key={laptop._id}
-                className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition flex flex-col"
-              >
-                {/* Product Image */}
-                <Link href={`/products/${laptop._id}`}>
-                  {laptop.image ? (
-                    <img
-                      src={laptop.image}
-                      alt={laptop.name}
-                      className="w-full h-48 object-cover rounded mb-4 cursor-pointer"
-                    />
-                  ) : (
-                    <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
-                  )}
-                </Link>
-
-                {/* Product Name */}
-                <Link
-                  href={`/products/${laptop._id}`}
-                  className="hover:underline"
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {paginatedLaptops.map((laptop) => (
+                <div
+                  key={laptop._id}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition flex flex-col"
                 >
-                  <h3 className="text-lg font-semibold mb-1">{laptop.name}</h3>
-                </Link>
+                  {/* Product Image */}
+                  <Link href={`/products/${laptop._id}`}>
+                    {laptop.image ? (
+                      <img
+                        src={laptop.image}
+                        alt={laptop.name}
+                        className="w-full h-48 object-cover rounded mb-4 cursor-pointer"
+                      />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-200 rounded mb-4"></div>
+                    )}
+                  </Link>
 
-                {/* Product Price */}
-                <p className="text-blue-600 font-bold mb-3">${laptop.price}</p>
+                  {/* Product Name */}
+                  <Link
+                    href={`/products/${laptop._id}`}
+                    className="hover:underline"
+                  >
+                    <h3 className="text-lg font-semibold mb-1">
+                      {laptop.name}
+                    </h3>
+                  </Link>
 
-                {/* Action Buttons */}
-                <div className="flex justify-between mt-auto">
-                  <button
-                    className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
-                    onClick={() => addToCart(laptop)}
-                  >
-                    <ShoppingCart size={18} />
-                  </button>
-                  <button
-                    className="p-2 bg-gray-200 text-red-500 rounded-full hover:bg-red-400 hover:text-white transition"
-                    onClick={() => addToWishlist(laptop)}
-                  >
-                    <Heart size={18} />
-                  </button>
+                  {/* Product Price */}
+                  <p className="text-blue-600 font-bold mb-3">
+                    ${laptop.price}
+                  </p>
+
+                  {/* Action Buttons */}
+                  <div className="flex justify-between mt-auto">
+                    <button
+                      className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+                      onClick={() => addToCart(laptop)}
+                    >
+                      <ShoppingCart size={18} />
+                    </button>
+                    <button
+                      className="p-2 bg-gray-200 text-red-500 rounded-full hover:bg-red-400 hover:text-white transition"
+                      onClick={() => addToWishlist(laptop)}
+                    >
+                      <Heart size={18} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {/* ✅ Pagination Controls */}
+            <div className="flex justify-center items-center gap-4 mt-10">
+              <button
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={page === 1}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <span className="font-semibold text-blue-600">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={page === totalPages}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </section>
     </div>
