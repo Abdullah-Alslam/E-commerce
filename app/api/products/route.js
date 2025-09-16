@@ -22,7 +22,7 @@ export async function POST(req) {
   try {
     await connectDB();
     const body = await req.json();
-    const { name, price, description, image, category } = body;
+    const { name, price, description, image, category, discount, hotDeal } = body;
 
     if (!name || !price || !image || !category) {
       return NextResponse.json(
@@ -37,7 +37,10 @@ export async function POST(req) {
       description,
       image,
       category,
+      discount: discount || 0,   // 🔹 افتراضي 0 إذا ما انبعت
+      hotDeal: hotDeal || false // 🔹 افتراضي false إذا ما انبعت
     });
+
     return NextResponse.json(product, { status: 201 });
   } catch (err) {
     console.error(err);
