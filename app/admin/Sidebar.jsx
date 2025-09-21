@@ -1,5 +1,5 @@
 "use client";
-import { LayoutDashboard, PlusCircle, Boxes, Users } from "lucide-react";
+import { LayoutDashboard, PlusCircle, Boxes, Users, Settings } from "lucide-react";
 
 export default function Sidebar({ setSection }) {
   return (
@@ -40,6 +40,14 @@ export default function Sidebar({ setSection }) {
         >
           <Users className="w-5 h-5 text-pink-400" />
           <span className="font-medium">Users</span>
+        </button>
+
+        <button
+          className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition"
+          onClick={() => setSection("settings")}
+        >
+          <Settings className="w-5 h-5 text-purple-400" />
+          <span className="font-medium">Settings</span>
         </button>
       </nav>
 
