@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+
 import Sidebar from "./Sidebar";
 import ProfileTab from "./ProfileTab";
 import OrdersTab from "./OrdersTab";
@@ -11,12 +12,18 @@ import SecurityTab from "./SecurityTab";
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState("profile");
 
+  // بدل JWT، نقدر نحدد userId ثابت مؤقتًا
+  const currentUserId = "1234567890"; // مثال مؤقت
+
   return (
     <div className="min-h-screen bg-gray-50 py-10 flex justify-center">
       <div className="w-full max-w-6xl bg-white shadow-lg rounded-2xl flex overflow-hidden">
+        {/* القائمة الجانبية */}
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+        {/* محتوى الصفحة */}
         <main className="flex-1 p-8">
-          {activeTab === "profile" && <ProfileTab />}
+          {activeTab === "profile" && <ProfileTab userId={currentUserId} />}
           {activeTab === "orders" && <OrdersTab />}
           {activeTab === "addresses" && <AddressesTab />}
           {activeTab === "wishlist" && <WishlistTab />}
