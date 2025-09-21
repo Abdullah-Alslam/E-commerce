@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import Sidebar from "./Sidebar";
-import AddProduct from './AddProduct'
+import AddProduct from "./AddProduct";
 import ManageProducts from "./MangeProducts";
 import DashboardOverview from "./DashboardOverView";
+import Users from "./Users";
 export default function AdminPage() {
   const [section, setSection] = useState("add"); // "add" أو "manage"
 
@@ -13,7 +14,7 @@ export default function AdminPage() {
       {section === "add" && <AddProduct />}
       {section === "manage" && <ManageProducts />}
       {section === "dashboard" && <DashboardOverview />}
-
+      {section === "users" && <Users />}
     </div>
   );
 }

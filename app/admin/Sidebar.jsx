@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { LayoutDashboard, PlusCircle, Boxes } from "lucide-react";
+import { LayoutDashboard, PlusCircle, Boxes, Users } from "lucide-react";
 
 export default function Sidebar({ setSection }) {
   return (
@@ -33,9 +32,18 @@ export default function Sidebar({ setSection }) {
           <Boxes className="w-5 h-5 text-yellow-400" />
           <span className="font-medium">Manage Products</span>
         </button>
+
+        {/* زر Users */}
+        <button
+          className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition"
+          onClick={() => setSection("users")}
+        >
+          <Users className="w-5 h-5 text-pink-400" />
+          <span className="font-medium">Users</span>
+        </button>
       </nav>
 
-      {/* مساحة سفلية (اختياري) */}
+      {/* مساحة سفلية */}
       <div className="mt-auto pt-6 border-t border-gray-700 text-sm text-gray-400">
         © 2025 Your Store
       </div>
