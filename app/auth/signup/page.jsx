@@ -3,6 +3,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/router";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -12,6 +14,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,6 +40,9 @@ export default function SignupPage() {
 
       if (res.status === 201) {
         setSuccess("User registered successfully! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
       }
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
@@ -110,10 +116,11 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-all ${
+            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
               loading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >
+            {loading && <Loader2 className="animate-spin h-5 w-5" />}
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
