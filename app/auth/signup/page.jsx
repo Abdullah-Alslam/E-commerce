@@ -1,7 +1,8 @@
 // app/auth/signup/page.js
+
 import SignupForm from "./SignupForm";
 
-// ✅ Metadata for SEO (Server Component)
+//  Metadata for SEO 
 export const metadata = {
   title: "Create New Account - MyWebsite",
   description: "Sign up now to get the best experience on MyWebsite. Fast, secure, and easy.",
