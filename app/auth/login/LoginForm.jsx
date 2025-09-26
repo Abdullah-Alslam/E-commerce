@@ -4,12 +4,16 @@ import { useState } from "react";
 import axios from "axios";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
+import Cookie from "cookie-universal";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const cookie = Cookie();
+  const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -17,11 +21,20 @@ export default function LoginForm() {
 
     try {
       const res = await axios.post("/api/login", { email, password });
-      console.log(res);
       toast.success("Login successful!");
 
+      const token = res.data.token;
+      cookie.set("token", token, {
+        path: "/",
+        secure: process.env.NODE_ENV === "production", // HTTPS
+        sameSite: "strict",
+      });
+
+      console.log("Token saved:", token);
+
+      setTimeout(() => router.push("/"), 1000);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error(err.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);
@@ -47,7 +60,8 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-3
+                         focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               placeholder="your@email.com"
             />
           </div>
@@ -61,7 +75,8 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-3
+                           focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 placeholder="Enter your password"
               />
               <button
@@ -78,9 +93,10 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
-              loading ? "opacity-60 cursor-not-allowed" : ""
-            }`}
+            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg
+                        transition-all flex items-center justify-center gap-2 ${
+                          loading ? "opacity-60 cursor-not-allowed" : ""
+                        }`}
           >
             {loading && <Loader2 className="animate-spin h-5 w-5" />}
             {loading ? "Logging in..." : "Login"}
