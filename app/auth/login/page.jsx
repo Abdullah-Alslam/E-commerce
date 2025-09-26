@@ -2,41 +2,41 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
       const res = await axios.post("/api/login", { email, password });
       console.log(res);
-      
+      toast.success("Login successful!");
+
     } catch (err) {
       console.log(err);
-      setError(err.response?.data?.error || "Something went wrong");
+      toast.error(err.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 p-4">
-      <div className="bg-gray-800 p-10 rounded-2xl shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center text-white">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+      <div className="bg-gray-800 p-10 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold mb-4 text-center text-white">
           Login
         </h2>
-
-        {error && <p className="text-red-500 mb-3 text-center">{error}</p>}
+        <p className="text-gray-300 mb-6 text-center">
+          Welcome back! Please enter your details.
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
@@ -78,10 +78,11 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-all ${
+            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
               loading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >
+            {loading && <Loader2 className="animate-spin h-5 w-5" />}
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>

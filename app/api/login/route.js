@@ -4,7 +4,7 @@ import connectToDatabase from "@/lib/mongodb";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
-// Schema المستخدم
+// Schema 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-// منع إعادة تعريف الموديل عند Hot Reload
+// Hot Reload
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export async function POST(req) {
@@ -35,11 +35,11 @@ export async function POST(req) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
-    // إنشاء JWT Token
+    
     const token = jwt.sign(
       { userId: user._id, name: user.name, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } // صالح لمدة 7 أيام
+      { expiresIn: "7d" } 
     );
 
     return NextResponse.json(
