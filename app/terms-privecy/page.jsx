@@ -1,11 +1,34 @@
 "use client";
 
 import { Phone, MessageCircle, Send } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function TermsPrivacy() {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setData("Loaded");
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="space-y-4 w-full max-w-xl px-6">
+          <div className="h-10 bg-gray-300 rounded animate-pulse"></div>
+          <div className="h-6 bg-gray-300 rounded animate-pulse"></div>
+          <div className="h-6 bg-gray-300 rounded animate-pulse"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8 md:p-16 flex flex-col items-center">
-      {/* Title */}
+    <div className="min-h-screen bg-gray-50 p-8 md:p-16 flex flex-col items-center animate-fadeIn">
       <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
         Terms & Privacy
       </h1>
@@ -91,7 +114,6 @@ export default function TermsPrivacy() {
         </a>
       </section>
 
-      {/* Footer Note */}
       <p className="text-gray-600 text-sm text-center max-w-3xl">
         © 2025 Your Company. All rights reserved. By using this site, you agree to our Terms & Privacy Policy.
       </p>
