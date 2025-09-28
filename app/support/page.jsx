@@ -22,7 +22,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "https://your-domain.com/images/support-og.jpg", // استبدلها بصورة مناسبة
+        url: "https://your-domain.com/images/support-og.jpg", 
         width: 1200,
         height: 630,
         alt: "Support Center - Abdullah Abdalsalam",
@@ -34,7 +34,7 @@ export const metadata = {
     title: "Support Center | Abdullah Abdalsalam",
     description:
       "Contact Abdullah Abdalsalam for any support or collaboration inquiries. Fast and friendly help 24/7.",
-    images: ["https://your-domain.com/images/support-og.jpg"], // استبدلها إذا عندك صورة
+    images: ["https://your-domain.com/images/support-og.jpg"], 
   },
 };
 
