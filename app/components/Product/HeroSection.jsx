@@ -7,6 +7,7 @@ export default function HeroSection({ title, product, link, fetchProducts }) {
         <div className="md:w-1/2 mb-10 md:mb-0">
           <h1 className="text-5xl font-bold mb-4">{title}</h1>
           <p className="text-gray-200 mb-6 text-lg">
+            {" "}
             Browse high-performance {product} for work, gaming, and study.
           </p>
           <button

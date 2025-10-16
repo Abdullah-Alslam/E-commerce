@@ -3,7 +3,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-
 import FiltersBar from "./Product/FiltersBar";
 import LoadingScreen from "./Product/LoadingScreen";
 import HeroSection from "./Product/HeroSection";
@@ -42,21 +41,27 @@ export default function ProductsList({ category, title, product, link }) {
   }
 
   function resetFilters() {
-    setSearch(""); setMinPrice(""); setMaxPrice(""); setSortType(""); setPage(1);
+    setSearch("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSortType("");
+    setPage(1);
   }
 
   const filtered = products
     .filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
       const min = minPrice ? Number(minPrice) : 0;
       const max = maxPrice ? Number(maxPrice) : Infinity;
       return matchesSearch && item.price >= min && item.price <= max;
     })
-    .sort((a,b)=>{
-      if (sortType==="price-asc") return a.price-b.price;
-      if (sortType==="price-desc") return b.price-a.price;
-      if (sortType==="name-asc") return a.name.localeCompare(b.name);
-      if (sortType==="name-desc") return b.name.localeCompare(a.name);
+    .sort((a, b) => {
+      if (sortType === "price-asc") return a.price - b.price;
+      if (sortType === "price-desc") return b.price - a.price;
+      if (sortType === "name-asc") return a.name.localeCompare(b.name);
+      if (sortType === "name-desc") return b.name.localeCompare(a.name);
       return 0;
     });
 
@@ -71,7 +76,9 @@ export default function ProductsList({ category, title, product, link }) {
       toast.success("Product added to wishlist");
     } catch {
       toast.error("Failed to add product");
-    } finally { setActionLoading(false); }
+    } finally {
+      setActionLoading(false);
+    }
   }
 
   async function addToCart(product) {
@@ -81,25 +88,38 @@ export default function ProductsList({ category, title, product, link }) {
       toast.success("Product added to cart");
     } catch {
       toast.error("Failed to add product");
-    } finally { setActionLoading(false); }
+    } finally {
+      setActionLoading(false);
+    }
   }
 
   if (pageLoading) return <LoadingScreen />;
 
   return (
     <div className="bg-gray-50 text-gray-900 min-h-screen">
-      <HeroSection title={title} product={product} link={link} fetchProducts={fetchProducts} />
+      <HeroSection
+        title={title}
+        product={product}
+        link={link}
+        fetchProducts={fetchProducts}
+      />
 
       <section className="max-w-7xl mx-auto px-6 py-10">
         <FiltersBar
-          search={search} setSearch={setSearch}
-          minPrice={minPrice} setMinPrice={setMinPrice}
-          maxPrice={maxPrice} setMaxPrice={setMaxPrice}
-          sortType={sortType} setSortType={setSortType}
+          search={search}
+          setSearch={setSearch}
+          minPrice={minPrice}
+          setMinPrice={setMinPrice}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+          sortType={sortType}
+          setSortType={setSortType}
           resetFilters={resetFilters}
         />
 
-        <h2 className="text-3xl font-bold text-blue-500 mb-10">{product} Collection</h2>
+        <h2 className="text-3xl font-bold text-blue-500 mb-10">
+          {product} Collection
+        </h2>
 
         {paginated.length === 0 ? (
           <p className="text-gray-600">No {product} available</p>
@@ -116,7 +136,11 @@ export default function ProductsList({ category, title, product, link }) {
                 />
               ))}
             </div>
-            <PaginationControls page={page} totalPages={totalPages} setPage={setPage} />
+            <PaginationControls
+              page={page}
+              totalPages={totalPages}
+              setPage={setPage}
+            />
           </>
         )}
       </section>
