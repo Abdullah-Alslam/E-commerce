@@ -1,7 +1,9 @@
 "use client";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 
 import FiltersBar from "./Product/FiltersBar";
 import LoadingScreen from "./Product/LoadingScreen";
@@ -50,9 +52,7 @@ export default function ProductsList({ category, title, product, link }) {
 
   const filtered = products
     .filter((item) => {
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
       const min = minPrice ? Number(minPrice) : 0;
       const max = maxPrice ? Number(maxPrice) : Infinity;
       return matchesSearch && item.price >= min && item.price <= max;
@@ -96,7 +96,7 @@ export default function ProductsList({ category, title, product, link }) {
   if (pageLoading) return <LoadingScreen />;
 
   return (
-    <div className="bg-gray-50 text-gray-900 min-h-screen">
+    <div className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
       <HeroSection
         title={title}
         product={product}
@@ -122,20 +122,41 @@ export default function ProductsList({ category, title, product, link }) {
         </h2>
 
         {paginated.length === 0 ? (
-          <p className="text-gray-600">No {product} available</p>
+          <p className="text-gray-600 dark:text-gray-400">No {product} available</p>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {paginated.map((item) => (
-                <ProductCard
-                  key={item._id}
-                  item={item}
-                  addToCart={addToCart}
-                  addToWishlist={addToWishlist}
-                  actionLoading={actionLoading}
-                />
-              ))}
-            </div>
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: 0.1 },
+                },
+              }}
+            >
+              <AnimatePresence>
+                {paginated.map((item) => (
+                  <motion.div
+                    key={item._id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ProductCard
+                      item={item}
+                      addToCart={addToCart}
+                      addToWishlist={addToWishlist}
+                      actionLoading={actionLoading}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+
             <PaginationControls
               page={page}
               totalPages={totalPages}
