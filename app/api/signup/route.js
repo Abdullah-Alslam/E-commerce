@@ -4,15 +4,15 @@ import connectToDatabase from "@/lib/mongodb";
 import mongoose from "mongoose";
 
 // UserSchema
-
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, default: "user" }, 
   createdAt: { type: Date, default: Date.now },
 });
 
-//hot reload
+// hot reload
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export async function POST(req) {
@@ -28,7 +28,7 @@ export async function POST(req) {
 
     await connectToDatabase();
 
-    // ExistingUser
+    // Existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -37,17 +37,22 @@ export async function POST(req) {
       );
     }
 
-    // NEWUSER
+    // NEW USER
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
+      role: "user", 
     });
 
     return NextResponse.json(
-      { message: "User registered successfully", userId: newUser._id },
+      {
+        message: "User registered successfully",
+        userId: newUser._id,
+        role: newUser.role, // 
+      },
       { status: 201 }
     );
   } catch (err) {
