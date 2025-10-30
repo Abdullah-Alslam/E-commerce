@@ -1,15 +1,22 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Trash2, Shield, Search } from "lucide-react";
+import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Trash2 } from "lucide-react";
 
-export default function Users() {
+export default function ManageUsers() {
   const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState("");
   const [editUser, setEditUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // جلب المستخدمين عند تحميل الصفحة
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 6;
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -19,177 +26,259 @@ export default function Users() {
       setLoading(true);
       const res = await axios.get("/api/users");
       setUsers(res.data);
-      setLoading(false);
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to fetch users 😢");
+      console.log(err);
+    } finally {
       setLoading(false);
     }
   }
 
-  // حذف مستخدم
   async function handleDelete(id) {
     if (!confirm("Are you sure you want to delete this user?")) return;
     try {
       await axios.delete(`/api/users?id=${id}`);
+      toast.success("🗑️ User deleted successfully!");
       fetchUsers();
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete user.");
+      toast.error("Failed to delete user");
+      console.log(err);
     }
   }
 
-  // تعديل مستخدم
   async function handleUpdate(e) {
     e.preventDefault();
     try {
       await axios.put("/api/users", {
-        id: editUser._id,       // مهم جداً: id من MongoDB
+        id: editUser._id,
         name: editUser.name,
         email: editUser.email,
         role: editUser.role,
       });
+      toast.success("✅ User updated successfully!");
       setEditUser(null);
       fetchUsers();
     } catch (err) {
-      console.error(err);
-      alert("Failed to update user.");
+      toast.error("Failed to update user");
+      console.log(err);
     }
   }
 
-  // تصفية المستخدمين حسب البحث
+  // Filter users by search term
   const filteredUsers = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    <div className="flex-1 bg-gray-50 p-8 overflow-auto">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Users Management</h1>
+  // Pagination logic
+  const indexOfLast = currentPage * usersPerPage;
+  const indexOfFirst = indexOfLast - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-      {/* البحث */}
-      <div className="relative max-w-md mb-6">
-        <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+  // Loading Screen
+  if (loading)
+    return (
+      <motion.div
+        className="fixed inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          className="w-14 h-14 border-4 border-indigo-500 border-t-transparent rounded-full shadow-lg"
+        />
+        <motion.p
+          className="mt-6 text-lg text-gray-700 dark:text-gray-300 font-medium"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          Loading users...
+        </motion.p>
+      </motion.div>
+    );
+
+  return (
+    <motion.div
+      className="flex-1 p-6 bg-gray-100 dark:bg-gray-900 transition-colors duration-500 min-h-screen"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <ToastContainer position="bottom-right" autoClose={2500} />
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+        Manage Users
+      </h2>
+
+      {/* Search Input */}
+      <div className="mb-4 max-w-md mx-auto">
         <input
           type="text"
           placeholder="Search by name or email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
         />
       </div>
 
-      {/* جدول المستخدمين */}
-      <div className="overflow-x-auto shadow rounded-2xl">
-        <table className="min-w-full bg-white rounded-2xl">
-          <thead className="bg-gray-200">
+      {/* Modal for Editing User */}
+      {editUser && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.95 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-10 max-w-4xl w-full relative"
+          >
+            <button
+              onClick={() => setEditUser(null)}
+              className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            >
+              ✖
+            </button>
+
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              Edit User
+            </h3>
+
+            <form
+              className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end"
+              onSubmit={handleUpdate}
+            >
+              <input
+                type="text"
+                placeholder="Name"
+                value={editUser.name}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, name: e.target.value })
+                }
+                className="p-2 rounded border dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={editUser.email}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, email: e.target.value })
+                }
+                className="p-2 rounded border dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                required
+              />
+              <select
+                value={editUser.role}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, role: e.target.value })
+                }
+                className="p-2 rounded border dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+              </select>
+
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditUser(null)}
+                  className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Users Table */}
+      <div className="overflow-x-auto rounded-xl shadow bg-white dark:bg-gray-800">
+        <table className="min-w-full text-sm text-left text-gray-700 dark:text-gray-200">
+          <thead className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
             <tr>
-              <th className="p-4 text-left text-sm font-medium uppercase tracking-wide">Name</th>
-              <th className="p-4 text-left text-sm font-medium uppercase tracking-wide">Email</th>
-              <th className="p-4 text-left text-sm font-medium uppercase tracking-wide">Role</th>
-              <th className="p-4 text-left text-sm font-medium uppercase tracking-wide">Join Date</th>
-              <th className="p-4 text-left text-sm font-medium uppercase tracking-wide">Actions</th>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Email</th>
+              <th className="px-4 py-3">Role</th>
+              <th className="px-4 py-3">Join Date</th>
+              <th className="px-4 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="5" className="p-6 text-center text-gray-500">
-                  Loading...
+            {currentUsers.map((user) => (
+              <tr
+                key={user._id}
+                className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                <td className="px-4 py-2 font-medium">{user.name}</td>
+                <td className="px-4 py-2">{user.email}</td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      user.role === "admin"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-blue-100 text-blue-700"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </td>
+                <td className="px-4 py-2 text-gray-500">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-2 flex justify-center gap-2">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setEditUser(user)}
+                    className="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-500"
+                  >
+                    Edit
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleDelete(user._id)}
+                    className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-500"
+                  >
+                    Delete
+                  </motion.button>
                 </td>
               </tr>
-            ) : filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="p-6 text-center text-gray-500">
-                  No users found
-                </td>
-              </tr>
-            ) : (
-              filteredUsers.map((user) => (
-                <tr key={user._id} className="border-b hover:bg-gray-50 transition">
-                  <td className="p-4 font-medium text-gray-800">{user.name}</td>
-                  <td className="p-4 text-gray-700">{user.email}</td>
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                        user.role === "Admin"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-blue-100 text-blue-700"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="p-4 text-gray-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="p-4 flex gap-2">
-                    <button
-                      onClick={() => setEditUser(user)}
-                      className="flex items-center gap-1 px-3 py-1 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm"
-                    >
-                      <Shield className="w-4 h-4" />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user._id)}
-                      className="flex items-center gap-1 px-3 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Edit Modal */}
-      {editUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <form onSubmit={handleUpdate} className="bg-white p-6 rounded-lg w-96 shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Edit User</h2>
-            <input
-              type="text"
-              value={editUser.name}
-              onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
-              className="w-full mb-3 p-2 border rounded"
-              placeholder="Name"
-              required
-            />
-            <input
-              type="email"
-              value={editUser.email}
-              onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
-              className="w-full mb-3 p-2 border rounded"
-              placeholder="Email"
-              required
-            />
-            <select
-              value={editUser.role}
-              onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}
-              className="w-full mb-4 p-2 border rounded"
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 flex-wrap gap-2">
+          {Array.from({ length: totalPages }).map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentPage(idx + 1)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition ${
+                currentPage === idx + 1
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-indigo-500 hover:text-white"
+              }`}
             >
-              <option value="User">User</option>
-              <option value="Admin">Admin</option>
-            </select>
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setEditUser(null)}
-                className="px-4 py-2 bg-gray-300 rounded"
-              >
-                Cancel
-              </button>
-              <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded">
-                Save
-              </button>
-            </div>
-          </form>
+              {idx + 1}
+            </button>
+          ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
