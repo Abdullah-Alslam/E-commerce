@@ -16,36 +16,38 @@ export default function ImageUploader({ onUploadedUrl }) {
       formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
 
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData,
+      });
 
       const data = await res.json();
       setImageUrl(data.secure_url);
 
-      // مرر الرابط للأب إذا بدك تستخدمو بمكان تاني
       if (onUploadedUrl) onUploadedUrl(data.secure_url);
-
     } catch (err) {
-      console.log(err);
-      alert("Upload failed");
+      console.error(err);
+      alert("Upload failed. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div>
-      <input type="file" accept="image/*" onChange={handleFile} />
-      {loading && <p>Uploading...</p>}
+    <div className="flex flex-col items-center gap-3">
+      <label className="cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 transition">
+        Select Image
+        <input type="file" accept="image/*" onChange={handleFile} className="hidden" />
+      </label>
+
+      {loading && (
+        <p className="text-sm text-gray-600 dark:text-gray-300 animate-pulse">Uploading...</p>
+      )}
+
       {imageUrl && (
-        <div>
-          <p>✅ تم رفع الصورة 👇</p>
-          <img src={imageUrl} alt="Uploaded" width={200} />
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-sm text-green-600 font-medium">✅ Image uploaded successfully!</p>
+         
         </div>
       )}
     </div>
