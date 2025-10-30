@@ -3,12 +3,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import Link from "next/link";
-
+import ProtectedRout from "./components/ProtectedRoute"
 export default function HomePage() {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ جلب الـ Hot Deals عند تحميل الصفحة
   useEffect(() => {
     fetchDeals();
   }, []);
@@ -25,6 +24,7 @@ export default function HomePage() {
   }
 
   return (
+    <ProtectedRout>
     <div className="bg-gray-50 text-gray-900">
       {/* 1️⃣ Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-500 to-purple-600 text-white py-20 px-6 text-center">
@@ -188,6 +188,7 @@ export default function HomePage() {
           </button>
         </div>
       </section>
-    </div>
+      </div>
+      </ProtectedRout>
   );
 }
