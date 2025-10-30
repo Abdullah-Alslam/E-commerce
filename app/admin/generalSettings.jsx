@@ -3,139 +3,166 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { LogOut } from "lucide-react";
+import { LogOut, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SettingsPage() {
+  const [loading, setLoading] = useState(true);
   const [storeName, setStoreName] = useState("");
   const [about, setAbout] = useState("");
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Fetch store data from MongoDB
+  // Fetch settings from DB
   useEffect(() => {
-    const fetchSettings = async () => {
+    async function fetchSettings() {
       try {
-        const { data } = await axios.get("/api/settings");
-        setStoreName(data.storeName || "");
-        setAbout(data.about || "");
-      } catch (error) {
-        console.error("Failed to load settings", error);
+        const res = await axios.get("/api/settings");
+        setStoreName(res.data.storeName);
+        setAbout(res.data.about);
+        console.log(res);
+      } catch (err) {
+        toast.error("⚠️ Failed to load settings");
+        console.log(err);
       } finally {
         setLoading(false);
       }
-    };
+    }
     fetchSettings();
   }, []);
 
-  // Save settings
-  const handleSave = async () => {
+  // Handle save
+  async function handleSave() {
     try {
-      await axios.post("/api/settings", { storeName, about });
-      toast.success("Settings saved successfully!");
-    } catch (error) {
-      toast.error("Failed to save settings");
+      const res = await axios.put("/api/settings", { storeName, about });
+      toast.success("✅ Settings saved successfully!");
+      console.log(res);
+    } catch (err) {
+      toast.error("❌ Failed to save settings");
+      console.log(err);
     }
-  };
-
-  // Log out
-  const handleLogout = () => {
-    // clear token or session logic
-    localStorage.removeItem("token");
-    router.push("/login");
-  };
+  }
 
   if (loading) {
     return (
       <motion.div
-        className="flex items-center justify-center h-screen text-gray-600 dark:text-gray-300"
+        className="fixed inset-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        Loading settings...
+        <motion.div
+          className="w-14 h-14 border-4 border-indigo-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        />
+        <motion.p
+          className="mt-6 text-lg text-gray-700 dark:text-gray-300"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          Loading settings...
+        </motion.p>
       </motion.div>
     );
   }
 
   return (
     <motion.div
-      className="min-h-screen flex flex-col items-center justify-center px-6 py-10 bg-gray-50 dark:bg-gray-900 transition-colors duration-500"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      className="flex-1 p-6 md:p-10 bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-500"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
     >
-      <motion.h1
-        className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-8"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-      >
-        Settings ⚙️
-      </motion.h1>
+      <ToastContainer position="bottom-right" autoClose={2500} />
 
       <motion.div
-        className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8"
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120 }}
+        className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-10 space-y-8"
+        initial={{ scale: 0.97 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.4 }}
       >
+        {/* Header */}
+        <motion.h1
+          className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 text-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          ⚙️ Settings
+        </motion.h1>
+
         {/* Store Name */}
-        <div className="mb-6">
-          <label className="block text-gray-700 dark:text-gray-200 mb-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Store Name
-          </label>
+          </h2>
           <input
             type="text"
             value={storeName}
             onChange={(e) => setStoreName(e.target.value)}
-            placeholder="Enter store name"
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full p-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            placeholder="Enter your store name"
           />
-        </div>
+        </motion.div>
 
         {/* About */}
-        <div className="mb-6">
-          <label className="block text-gray-700 dark:text-gray-200 mb-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             About Store
-          </label>
+          </h2>
           <textarea
             value={about}
             onChange={(e) => setAbout(e.target.value)}
-            placeholder="Write a short description..."
-            rows={4}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
-          ></textarea>
-        </div>
+            className="w-full h-32 p-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700 dark:text-white resize-none"
+            placeholder="Write about your store..."
+          />
+        </motion.div>
 
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <motion.button
-            onClick={handleSave}
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition-all"
-            whileTap={{ scale: 0.95 }}
-          >
-            Save Changes
-          </motion.button>
-
-          <motion.button
-            onClick={handleLogout}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg shadow-md transition-all"
-            whileTap={{ scale: 0.95 }}
-          >
-            <LogOut size={18} />
-            Log out
-          </motion.button>
-        </div>
-
-        {/* Version Info */}
+        {/* Save Button */}
         <motion.div
-          className="text-center text-gray-500 dark:text-gray-400 pt-6"
+          className="flex justify-center gap-4 pt-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleSave}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-medium px-6 py-2 rounded-lg transition"
+          >
+            <Save size={18} /> Save
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              localStorage.clear();
+              router.push("/login");
+            }}
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-medium px-6 py-2 rounded-lg transition"
+          >
+            <LogOut size={18} /> Logout
+          </motion.button>
+        </motion.div>
+
+        {/* ✅ Version Info */}
+        <motion.div
+          className="text-center pt-6 text-sm text-gray-500 dark:text-gray-400"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5 }}
         >
-          <p>
-            Project Version: <span className="font-semibold">v1.0.0</span>
-          </p>
+          <p>Project Version: <span className="font-semibold">v1.0.0</span></p>
         </motion.div>
       </motion.div>
     </motion.div>
