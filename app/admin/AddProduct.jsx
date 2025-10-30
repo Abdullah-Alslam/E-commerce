@@ -56,13 +56,13 @@ export default function AddProduct() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex-1 p-6 flex justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-500"
+      className="flex-1 p-6 flex justify-center items-start bg-gray-100 dark:bg-gray-900 transition-colors duration-500 min-h-screen overflow-y-auto"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-lg bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6"
+        className="w-full max-w-lg bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 flex flex-col"
       >
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">
           Add New Product
@@ -101,8 +101,6 @@ export default function AddProduct() {
                 className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
-
-            {/* Old Price */}
             <div className="flex-1">
               <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
                 Old Price (optional)
@@ -177,14 +175,18 @@ export default function AddProduct() {
             </label>
             <ImageUploader onUploadedUrl={handleImageUpload} />
             {form.image && (
-              <motion.img
-                src={form.image}
-                alt="Uploaded"
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
-                className="w-40 mt-3 rounded-lg shadow mx-auto"
-              />
+                className="w-full mt-3 flex justify-center overflow-hidden rounded-lg shadow"
+              >
+                <img
+                  src={form.image}
+                  alt="Uploaded"
+                  className="max-w-full max-h-80 object-contain rounded-lg"
+                />
+              </motion.div>
             )}
           </div>
 
