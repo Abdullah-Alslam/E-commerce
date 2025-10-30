@@ -3,6 +3,10 @@
 import { useState } from "react";
 import axios from "axios";
 import ImageUploader from "./ImageUploader";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function AddProduct() {
   const [form, setForm] = useState({
@@ -14,6 +18,7 @@ export default function AddProduct() {
     image: "",
     hotDeal: false,
   });
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,10 +30,10 @@ export default function AddProduct() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
     try {
-      const res = await axios.post("/api/products", form);
-      alert("✅ Product added successfully!");
-      // Reset form after adding
+      await axios.post("/api/products", form);
+      toast.success("✅ Product added successfully!");
       setForm({
         name: "",
         price: "",
@@ -39,99 +44,173 @@ export default function AddProduct() {
         hotDeal: false,
       });
     } catch (err) {
-      console.log("❌ Error adding product:", err);
-      alert("Failed to add product");
+      console.error("❌ Error adding product:", err);
+      toast.error("Failed to add product");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="p-4 flex-1">
-      <h2 className="text-2xl font-bold mb-4">Add New Product</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-96">
-        {/* Product Name */}
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Product Name"
-          required
-          className="p-2 border rounded"
-        />
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex-1 p-6 flex justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-500"
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-lg bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">
+          Add New Product
+        </h2>
 
-        {/* Price */}
-        <input
-          type="number"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          placeholder="Price"
-          required
-          className="p-2 border rounded"
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Product Name */}
+          <div>
+            <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
+              Product Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Enter product name"
+              required
+              className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-        {/* Old Price */}
-        <input
-          type="number"
-          name="oldPrice"
-          value={form.oldPrice}
-          onChange={handleChange}
-          placeholder="Old Price (optional)"
-          className="p-2 border rounded"
-        />
+          {/* Price */}
+          <div className="flex gap-4 flex-col sm:flex-row">
+            <div className="flex-1">
+              <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
+                Price ($)
+              </label>
+              <input
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="Enter price"
+                required
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
 
-        {/* Category */}
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-          className="p-2 border rounded"
-        >
-          <option value="">Select Category</option>
-          <option value="Laptops">Laptops</option>
-          <option value="Mobiles">Mobiles</option>
-          <option value="Tablets">Tablets</option>
-          <option value="Accessories">Accessories</option>
-          <option value="Smart Watches">Smart Watches</option>
-        </select>
+            {/* Old Price */}
+            <div className="flex-1">
+              <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
+                Old Price (optional)
+              </label>
+              <input
+                type="number"
+                name="oldPrice"
+                value={form.oldPrice}
+                onChange={handleChange}
+                placeholder="Enter old price"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
 
-        {/* Description */}
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Description"
-          className="p-2 border rounded"
-        />
+          {/* Category */}
+          <div>
+            <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
+              Category
+            </label>
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+              className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">Select Category</option>
+              <option value="Laptops">Laptops</option>
+              <option value="Mobiles">Mobiles</option>
+              <option value="Tablets">Tablets</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Smart Watches">Smart Watches</option>
+            </select>
+          </div>
 
-        {/* Hot Deal Checkbox */}
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="hotDeal"
-            checked={form.hotDeal}
-            onChange={(e) =>
-              setForm({ ...form, hotDeal: e.target.checked })
-            }
-          />
-          Mark as Hot Deal 🔥
-        </label>
+          {/* Description */}
+          <div>
+            <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Write a short product description..."
+              rows={3}
+              className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-        {/* Image Upload */}
-        <ImageUploader onUploadedUrl={handleImageUpload} />
-        {form.image && (
-          <img src={form.image} alt="Uploaded" className="w-32 mt-2 mx-auto" />
-        )}
+          {/* Hot Deal */}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="hotDeal"
+              checked={form.hotDeal}
+              onChange={(e) =>
+                setForm({ ...form, hotDeal: e.target.checked })
+              }
+              className="w-5 h-5 accent-orange-500"
+            />
+            <span className="text-gray-800 dark:text-gray-300">
+              Mark as Hot Deal 🔥
+            </span>
+          </label>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="p-2 bg-blue-600 text-white rounded hover:bg-blue-500"
-        >
-          Add Product
-        </button>
-      </form>
-    </div>
+          {/* Image Upload */}
+          <div>
+            <label className="text-gray-700 dark:text-gray-300 text-sm mb-1 block">
+              Product Image
+            </label>
+            <ImageUploader onUploadedUrl={handleImageUpload} />
+            {form.image && (
+              <motion.img
+                src={form.image}
+                alt="Uploaded"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="w-40 mt-3 rounded-lg shadow mx-auto"
+              />
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            disabled={loading}
+            className="mt-2 p-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow flex items-center justify-center transition disabled:opacity-70"
+          >
+            {loading ? (
+              <motion.div
+                className="flex items-center gap-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <Loader2 className="animate-spin w-5 h-5" />
+                <span>Adding Product...</span>
+              </motion.div>
+            ) : (
+              "Add Product"
+            )}
+          </motion.button>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 }
