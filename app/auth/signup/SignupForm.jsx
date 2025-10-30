@@ -67,6 +67,7 @@ export default function SignupForm() {
               name="name"
               value={form.name}
               onChange={handleChange}
+              placeholder='Enter yor name please'
             />
             <InputField
               label="Email"
@@ -74,6 +75,7 @@ export default function SignupForm() {
               type="email"
               value={form.email}
               onChange={handleChange}
+              placeholder='Enter your email please'
             />
             <InputField
               label="Password"
@@ -81,6 +83,7 @@ export default function SignupForm() {
               type="password"
               value={form.password}
               onChange={handleChange}
+              placeholder='Enter your password please'
             />
 
             <button
