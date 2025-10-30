@@ -147,7 +147,7 @@ export default function SettingsPage() {
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               localStorage.clear();
-              router.push("/login");
+              router.push("/auth/login");
             }}
             className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-medium px-6 py-2 rounded-lg transition"
           >
