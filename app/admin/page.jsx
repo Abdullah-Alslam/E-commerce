@@ -6,17 +6,26 @@ import ManageProducts from "./MangeProducts";
 import DashboardOverview from "./DashboardOverView";
 import Users from "./Users";
 import GeneralSettings from "./generalSettings";
+import AddUser from "./AddUser";
+
 export default function AdminPage() {
-  const [section, setSection] = useState("add"); // "add" أو "manage"
+  const [section, setSection] = useState("dashboard");
+  const [over, setOver] = useState("");
 
   return (
     <div className="flex h-screen">
-      <Sidebar setSection={setSection} />
-      {section === "add" && <AddProduct />}
+      {/* Sidebar */}
+      <Sidebar setSection={setSection} setOver={setOver} />
+
+      {/* Pages */}
+      {section === "dashboard" && (
+        <DashboardOverview setSection={setSection} setOver={setOver} />
+      )}
+      {section === "add"   && <AddProduct />}
       {section === "manage" && <ManageProducts />}
-      {section === "dashboard" && <DashboardOverview />}
       {section === "users" && <Users />}
       {section === "settings" && <GeneralSettings />}
+      {section === "add user" && <AddUser />}
     </div>
   );
 }
