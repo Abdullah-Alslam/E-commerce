@@ -11,17 +11,31 @@ import {
   Menu,
   X,
   ChevronDown,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const router = useRouter();
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
+
+  // Simulate logout handler
+  async function handleLogout() {
+    try {
+      const res = await axios.post("/api/logout");
+      console.log(res);
+      router.push("/auth/login");
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <header className="w-full border-b border-red-600">
@@ -187,18 +201,18 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Shop Now Button */}
+          {/* Logout Button */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="hidden md:flex"
           >
-            <Link
-              href="/products"
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition"
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
             >
-              Shop Now <ChevronDown size={16} />
-            </Link>
+              <LogOut size={16} /> Logout
+            </button>
           </motion.div>
         </div>
       </div>
