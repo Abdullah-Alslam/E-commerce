@@ -27,6 +27,7 @@ const router =useRouter()
     setLoading(true);
     try {
       const res = await axios.post("/api/login", form);
+      console.log(res)
       const token = res.data.token;
       cookie.set("token", token, {
         path: "/",
