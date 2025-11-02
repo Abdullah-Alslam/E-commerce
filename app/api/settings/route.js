@@ -7,7 +7,7 @@ export async function GET() {
   try {
     await connectToDatabase();
 
-    const settings = await Setting.findOne();
+    const settings = await Setting.findOne({ storeId: "store-info" });
 
     if (!settings) {
       return NextResponse.json({
@@ -30,24 +30,29 @@ export async function PUT(req) {
     await connectToDatabase();
     const body = await req.json();
 
-    let settings = await Setting.findOne();
+    console.log("📦 Received PUT body:", body);
 
-    if (!settings) {
-      settings = await Setting.create({
-        storeName: body.storeName || "GameZone eCommerce",
-        about: body.about || "",
-      });
-    } else {
-      settings.storeName = body.storeName || settings.storeName;
-      settings.about = body.about || settings.about;
-      await settings.save();
+    if (!body.storeName || !body.storeName.trim()) {
+      return NextResponse.json(
+        { error: "storeName is required" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(settings);
+    const updatedSettings = await Setting.findOneAndUpdate(
+      { storeId: "store-info" },
+      {
+        storeName: body.storeName,
+        about: body.about || "",
+      },
+      { new: true, upsert: true } // ← ينشئ إذا غير موجود
+    );
+
+    return NextResponse.json(updatedSettings);
   } catch (err) {
-    console.error("PUT /api/settings error:", err);
+    console.error("❌ PUT /api/settings error:", err);
     return NextResponse.json(
-      { error: "Failed to update settings" },
+      { error: err.message || "Failed to update settings" },
       { status: 500 }
     );
   }
