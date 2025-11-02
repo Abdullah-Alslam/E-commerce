@@ -1,7 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { FiPhone, FiMessageCircle, FiSend, FiMail, FiMapPin, FiClock } from "react-icons/fi";
+import {
+  FiPhone,
+  FiMessageCircle,
+  FiSend,
+  FiMail,
+  FiMapPin,
+  FiClock,
+} from "react-icons/fi";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import emailjs from "@emailjs/browser";
@@ -53,7 +60,9 @@ export default function ContactInfo() {
         transition={{ delay: 0.2, duration: 0.6 }}
         className="max-w-2xl text-center text-gray-600 dark:text-gray-400 mb-10"
       >
-        Have a question, feedback, or a business inquiry? Fill out the form or reach us through the information below. We usually respond within 24 hours.
+        Have a question, feedback, or a business inquiry? Fill out the form or
+        reach us through the information below. We usually respond within 24
+        hours.
       </motion.p>
 
       {/* Map */}
@@ -84,13 +93,21 @@ export default function ContactInfo() {
           transition={{ duration: 0.6 }}
           className="flex flex-col space-y-5"
         >
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">Send a Message</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+            Send a Message
+          </h2>
           {["name", "email", "subject"].map((field) => (
             <motion.input
               key={field}
               type={field === "email" ? "email" : "text"}
               name={field}
-              placeholder={field === "name" ? "Your Name" : field === "email" ? "Your Email" : "Subject"}
+              placeholder={
+                field === "name"
+                  ? "Your Name"
+                  : field === "email"
+                  ? "Your Email"
+                  : "Subject"
+              }
               whileFocus={{ scale: 1.02, borderColor: "#f87171" }}
               transition={{ duration: 0.2 }}
               className="border p-3 rounded-xl focus:ring-2 focus:ring-red-500 dark:bg-gray-800 dark:border-gray-700 outline-none"
@@ -112,7 +129,9 @@ export default function ContactInfo() {
             disabled={loading}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`bg-red-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+            className={`bg-red-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">
@@ -132,17 +151,40 @@ export default function ContactInfo() {
           transition={{ duration: 0.6 }}
           className="flex flex-col space-y-6 text-gray-700 dark:text-gray-300"
         >
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Get in Touch</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            Get in Touch
+          </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Feel free to reach us by phone, WhatsApp, or email. We’re happy to answer any questions or schedule a meeting.
+            Feel free to reach us by phone, WhatsApp, or email. We’re happy to
+            answer any questions or schedule a meeting.
           </p>
 
           {/* Contact Links with Hover Motion */}
           {[
-            { icon: FiPhone, text: "+963 991 566 773", href: "tel:+963991566773", color: "text-red-500" },
-            { icon: FiMail, text: "abdullahxyzabc67@gmail.com", href: "mailto:abdullahxyzabc67@gmail.com", color: "text-red-500" },
-            { icon: FiMessageCircle, text: "WhatsApp Chat", href: "https://wa.me/963991566773", color: "text-green-600" },
-            { icon: FiSend, text: "Telegram", href: "https://t.me/abdullah1895328", color: "text-sky-500" },
+            {
+              icon: FiPhone,
+              text: "+963 991 566 773",
+              href: "tel:+963991566773",
+              color: "text-red-500",
+            },
+            {
+              icon: FiMail,
+              text: "abdullahxyzabc67@gmail.com",
+              href: "mailto:abdullahxyzabc67@gmail.com",
+              color: "text-red-500",
+            },
+            {
+              icon: FiMessageCircle,
+              text: "WhatsApp Chat",
+              href: "https://wa.me/963991566773",
+              color: "text-green-600",
+            },
+            {
+              icon: FiSend,
+              text: "Telegram",
+              href: "https://t.me/abdullah1895328",
+              color: "text-sky-500",
+            },
           ].map((item, i) => {
             const Icon = item.icon;
             return (
@@ -160,11 +202,18 @@ export default function ContactInfo() {
             );
           })}
 
-          <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-3 transition-all">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center gap-3 transition-all"
+          >
             <FiMapPin className="text-purple-600 text-xl" /> Damascus, Syria
           </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-3 transition-all">
-            <FiClock className="text-orange-500 text-xl" /> Mon – Fri: 9:00 AM – 6:00 PM
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center gap-3 transition-all"
+          >
+            <FiClock className="text-orange-500 text-xl" /> Mon – Fri: 9:00 AM –
+            6:00 PM
           </motion.div>
         </motion.div>
       </section>
