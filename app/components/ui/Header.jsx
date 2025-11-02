@@ -17,28 +17,68 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Cookie from "cookie-universal";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logo, setLogo] = useState("");
+  const [user, setUser] = useState(null);
   const router = useRouter();
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
 
-  // Simulate logout handler
+  const cookie = Cookie();
+
+  // ✅ Mount
+  useEffect(() => setMounted(true), []);
+
+  // ✅ Fetch Store Logo
+  useEffect(() => {
+    async function fetchLogo() {
+      try {
+        const res = await axios.get("/api/settings");
+        setLogo(res.data.storeName);
+      } catch (err) {
+        console.log("Logo fetch error:", err);
+      }
+    }
+    fetchLogo();
+  }, []);
+
+  // ✅ Fetch User
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const userId = cookie.get("userId");
+        if (!userId) return;
+
+        const res = await axios.get(`/api/users/${userId}`);
+        setUser(res.data);
+      } catch (err) {
+        console.log("User fetch error:", err);
+      }
+    }
+
+    fetchUser();
+  }, []);
+
+  // ✅ Logout handler
   async function handleLogout() {
     try {
-      const res = await axios.post("/api/logout");
-      console.log(res);
+      await axios.post("/api/logout");
+      cookie.remove("token");
+      cookie.remove("userId");
+      setUser(null);
       router.push("/auth/login");
     } catch (err) {
-      console.log(err);
+      console.log("Logout error:", err);
     }
   }
 
+  if (!mounted) return null;
+
   return (
-    <header className="w-full border-b border-red-600">
+    <header className="w-full border-b-4 border-red-600">
       {/* --------- Top Bar --------- */}
       <div className="w-full bg-gray-900 text-gray-200 dark:bg-gray-950 dark:text-gray-300 text-xs sm:text-sm">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center px-4 py-2">
@@ -51,10 +91,10 @@ export default function Header() {
           <div className="flex items-center gap-4 sm:gap-6 mt-2 sm:mt-0">
             <span>$ USD</span>
             <Link
-              href="/account"
+              href={user ? "/account" : "/auth/login"}
               className="flex items-center gap-1 hover:text-white"
             >
-              <User size={14} /> My Account
+              <User size={14} /> {user ? user.name : "My Account"}
             </Link>
             <Link
               href="/wishlist"
@@ -83,10 +123,27 @@ export default function Header() {
       {/* --------- Middle Navbar --------- */}
       <div className="w-full bg-[#111] dark:bg-[#0c0c0c] text-white">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-4">
-          {/* Logo */}
-          <Link href="/" className="text-3xl font-extrabold tracking-tight">
-            <span className="text-white">Electro</span>
-            <span className="text-red-600">.</span>
+          {/* ✅ Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            {logo && logo.startsWith("http") ? (
+              <motion.img
+                src={logo}
+                alt="Logo"
+                className="h-10 w-auto object-contain"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+              />
+            ) : (
+              <motion.span
+                className="text-3xl font-extrabold tracking-tight text-red-600"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                {logo || ""}
+              </motion.span>
+            )}
           </Link>
 
           {/* Desktop Nav Links */}
@@ -161,13 +218,11 @@ export default function Header() {
       {/* --------- Bottom Categories Bar --------- */}
       <div className="w-full bg-gray-100 dark:bg-[#1a1a1a] text-gray-800 dark:text-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center px-4 py-3 gap-3">
-          {/* Categories */}
           <div className="flex items-center gap-2 font-medium cursor-pointer hover:text-red-600 transition">
             <span>Categories</span>
             <ChevronDown size={18} />
           </div>
 
-          {/* Category Links */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
             <Link
               href="/products/laptops"
@@ -201,18 +256,26 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Logout Button */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="hidden md:flex"
           >
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
-            >
-              <LogOut size={16} /> Logout
-            </button>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+              >
+                <LogOut size={16} /> Logout
+              </button>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+              >
+                Login/Sigup
+              </Link>
+            )}
           </motion.div>
         </div>
       </div>
