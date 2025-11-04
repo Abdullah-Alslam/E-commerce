@@ -1,106 +1,83 @@
 "use client";
 
+import React from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ShoppingCart, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function ProductCard({
+const ProductCard = React.memo(function ProductCard({
   item,
   addToCart,
   addToWishlist,
   actionLoading,
 }) {
+  const priceFormatted =
+    typeof item.price === "number" ? item.price.toFixed(2) : item.price;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      whileHover={{ scale: 1.05 }}
-      className="relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition flex flex-col"
+    <motion.article
+      className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md border border-red-50 dark:border-gray-700 overflow-hidden"
+      initial={{ scale: 0.995 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      aria-labelledby={`product-${item._id}-title`}
+      role="group"
     >
-      {/* Product Image */}
-      <Link href={`/products/${item._id}`}>
-        <motion.div whileHover={{ scale: 1.08 }} transition={{ duration: 0.3 }}>
-          {item.image ? (
-            <Image
-              src={item.image}
-              alt={item.name}
-              width={400}
-              height={300}
-              className="w-full h-48 object-cover"
-            />
-          ) : (
-            <div className="w-full h-48 bg-gray-200"></div>
-          )}
-        </motion.div>
-      </Link>
+      <div className="relative w-full h-48 sm:h-56 md:h-44 lg:h-52 bg-gray-100 dark:bg-gray-700">
+        {/* next/image lazy by default */}
+        <Image
+          src={item.image || "/placeholder.png"}
+          alt={item.name || "Product image"}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
+          priority={false}
+        />
+      </div>
 
-      {/* Product Info */}
-      <div className="p-4 flex flex-col flex-1">
-        {/* Name + Badges */}
-        <div className="flex items-center gap-2 mb-2">
-          <Link
-            href={`/products/${item._id}`}
-            className="hover:underline flex-1"
-          >
-            <h3 className="text-md font-semibold text-gray-800 truncate">
-              {item.name}
-            </h3>
-          </Link>
+      <div className="p-4 flex flex-col gap-3">
+        <h3
+          id={`product-${item._id}-title`}
+          className="text-sm font-semibold text-red-600 line-clamp-2"
+        >
+          {item.name}
+        </h3>
 
-          {/* Inline badges */}
-          <div className="flex gap-1 shrink-0">
-            <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-              NEW
-            </span>
-            <span className="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-              SUPER
-            </span>
-            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-              HOT
-            </span>
-          </div>
-        </div>
-
-        {/* Price */}
-        <p className="text-lg font-extrabold text-blue-600 mb-3">
-          ${item.price}
+        <p className="text-sm text-gray-500 dark:text-gray-300 line-clamp-2">
+          {item.description || "Great product."}
         </p>
 
-        {/* Buttons */}
-        <div className="flex justify-between gap-2 mt-auto">
-          {/* Cart Button */}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-            disabled={actionLoading}
-            className={`p-2 rounded-full bg-blue-500 text-white shadow-md ${
-              actionLoading
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-blue-600"
-            } transition`}
-            onClick={() => addToCart(item)}
-          >
-            {actionLoading ? "..." : <ShoppingCart size={18} />}
-          </motion.button>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-lg font-bold text-red-700">
+            ${priceFormatted}
+          </span>
+          <span className="text-xs text-gray-400">
+            ({item.category || "—"})
+          </span>
+        </div>
 
-          {/* Wishlist Button */}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
+        <div className="flex items-center gap-2 mt-2">
+          <button
+            onClick={() => addToCart(item)}
             disabled={actionLoading}
-            className={`p-2 rounded-full bg-pink-100 text-pink-500 shadow-md ${
-              actionLoading
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-pink-500 hover:text-white"
-            } transition`}
-            onClick={() => addToWishlist(item)}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition"
+            aria-label={`Add ${item.name} to cart`}
           >
-            {actionLoading ? "..." : <Heart size={18} />}
-          </motion.button>
+            Add to cart
+          </button>
+
+          <button
+            onClick={() => addToWishlist(item)}
+            disabled={actionLoading}
+            className="inline-flex items-center justify-center p-2 rounded-lg border border-red-100 text-red-600 hover:bg-red-50 transition"
+            aria-label={`Add ${item.name} to wishlist`}
+            title="Wishlist"
+          >
+            ♥
+          </button>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
-}
+});
+
+export default ProductCard;
