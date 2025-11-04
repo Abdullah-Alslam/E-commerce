@@ -1,34 +1,43 @@
-import Image from "next/image";
+"use client";
+
+import { motion } from "framer-motion";
 
 export default function HeroSection({ title, product, link, fetchProducts }) {
   return (
-    <section className="bg-blue-300 text-white py-16">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
-        <div className="md:w-1/2 mb-10 md:mb-0">
-          <h1 className="text-5xl font-bold mb-4">{title}</h1>
-          <p className="text-gray-200 mb-6 text-lg">
-            {" "}
-            Browse high-performance {product} for work, gaming, and study.
-          </p>
-          <button
-            onClick={fetchProducts}
-            className="bg-yellow-400 text-gray-900 font-bold px-6 py-3 rounded hover:opacity-90 transition"
-          >
-            Show {product}
-          </button>
-        </div>
-
-        <div className="md:w-1/2 flex justify-center">
-          <Image
-            src={link}
-            alt={title}
-            width={320}
-            height={320}
-            className="w-80 h-80 object-cover rounded-xl shadow-lg"
-            priority
-          />
-        </div>
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="relative w-full rounded-lg p-8 flex flex-col lg:flex-row items-center gap-6
+                 bg-gradient-to-r from-red-600 to-red-200 dark:from-red-800 dark:to-gray-700
+                 transition-colors duration-500"
+    >
+      {/* Image */}
+      <div className="w-full lg:w-1/2 flex justify-center">
+        <img
+          src="/laptop.png"
+          alt="Laptop"
+          className="max-w-full h-auto rounded-lg shadow-lg"
+        />
       </div>
-    </section>
+
+      {/* Text */}
+      <div className="w-full lg:w-1/2 text-center lg:text-left flex flex-col gap-4">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-white dark:text-gray-100">
+          {title || product} Collection
+        </h2>
+        <p className="text-white/90 dark:text-gray-300 text-sm sm:text-base">
+          Browse curated {product} — updated and optimized for performance.
+        </p>
+        <button
+          onClick={fetchProducts}
+          className="mt-2 sm:mt-4 px-5 py-3 rounded-xl bg-white text-red-600 font-medium
+                     hover:bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700
+                     transition-all duration-300 shadow-sm hover:shadow-md"
+        >
+          Refresh Products
+        </button>
+      </div>
+    </motion.section>
   );
 }
