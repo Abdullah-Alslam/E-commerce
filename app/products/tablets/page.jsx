@@ -1,7 +1,8 @@
 // app/mobiles/page.js
 "use client";
 
-import ProductsList from "../../components/ProductsList";
+import ProductsList from "../../components/ui/ProductsList";
+
 
 export default function TabletsPage() {
   return (

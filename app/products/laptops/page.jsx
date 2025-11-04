@@ -1,7 +1,8 @@
-// app/laptops/page.js أو app/laptops/page.jsx
+// app/laptops/page.jsx
 "use client";
 
-import ProductsList from "../../components/ProductsList";
+import ProductsList from "../../components/ui/ProductsList";
+
 
 
 export default function LaptopsPage() {
