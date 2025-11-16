@@ -1,4 +1,5 @@
 // app/contact/page.jsx
+import ProtectedRoute from "../components/ProtectedRoute";
 import ContactInfo from "./ContactInfo";
 
 export const metadata = {
@@ -13,7 +14,7 @@ export const metadata = {
     "Next.js",
     "Freelance Developer",
     "Remote Developer",
-    "Hire Web Developer"
+    "Hire Web Developer",
   ],
   openGraph: {
     title: "Contact Abdullah Abdalsalam | Frontend Developer",
@@ -45,5 +46,9 @@ export const metadata = {
 };
 
 export default function Contact() {
-  return <ContactInfo />;
+  return (
+    <ProtectedRoute>
+      <ContactInfo />
+    </ProtectedRoute>
+  );
 }
