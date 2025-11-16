@@ -6,8 +6,8 @@ import { Loader2 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import ImageUploader from "./ImageUploader";
-import ProductFormFields from "./addproduct/ProductFormFields";
+import ImageUploader from "../ImageUploader";
+import ProductFormFields from "./ProductFormFields";
 import axios from "axios";
 
 export default function AddProduct() {
