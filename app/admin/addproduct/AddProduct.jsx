@@ -7,8 +7,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import ImageUploader from "../ImageUploader";
-import ProductFormFields from "./ProductFormFields";
 import axios from "axios";
+import ProductFormFields from "./ProductFormFields";
 
 export default function AddProduct() {
   const [form, setForm] = useState({
