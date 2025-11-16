@@ -1,4 +1,4 @@
-import AboutUs from "./AboutUs"; 
+import AboutUs from "./AboutUs";
 
 export const metadata = {
   title: "About Us | Abdullah Abdalsalam",
