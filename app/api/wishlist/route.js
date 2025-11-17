@@ -1,30 +1,27 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
+import connectToDatabase from "../../../lib/mongodb";
 import Wishlist from "../../models/Wishlist";
 
 export async function GET() {
-  await connectDB();
   try {
-    const items = await Wishlist.find({});
+    await connectToDatabase();
+    const items = await Wishlist.find();
     return NextResponse.json(items);
   } catch (err) {
-    return NextResponse.json({ error: "Failed to fetch wishlist" }, { status: 500 });
+    return NextResponse.json({ error: "Error fetching wishlist" }, { status: 500 });
   }
 }
 
 export async function POST(req) {
-  await connectDB();
   try {
-    const body = await req.json();
-    const exists = await Wishlist.findOne({ productId: body.productId });
+    await connectToDatabase();
+    const data = await req.json();
 
-    if (exists) {
-      return NextResponse.json({ message: "Already in wishlist" }, { status: 400 });
-    }
+    const newItem = new Wishlist(data);
+    await newItem.save();
 
-    const newItem = await Wishlist.create(body);
     return NextResponse.json(newItem, { status: 201 });
   } catch (err) {
-    return NextResponse.json({ error: "Failed to add item" }, { status: 500 });
+    return NextResponse.json({ error: "Error adding item" }, { status: 500 });
   }
 }
