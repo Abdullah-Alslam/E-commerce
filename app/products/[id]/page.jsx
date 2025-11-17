@@ -1,144 +1,143 @@
 "use client";
 
-import { use } from "react";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
-import { ShoppingCart, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { toast } from "react-toastify";
+import { motion, useReducedMotion } from "framer-motion";
+
+import ImageCarousel from "./ImageCarousel";
+import ProductHeader from "./ProductHeader";
+import ProductTabs from "./ProductTabs";
+import ProductActions from "./ProductActions";
+import ProductAside from "./ProductAside";
 
 export default function ProductDetail({ params }) {
-  const { id } = use(params);
+  const resolvedParams = React.use(params);
+  const id = resolvedParams?.id;
+
   const [product, setProduct] = useState(null);
   const [activeTab, setActiveTab] = useState("description");
   const [currentImage, setCurrentImage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  const prefersReducedMotion = useReducedMotion();
+
+  // Fetch product
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchProduct() {
       try {
-        const res = await axios.get(`/api/products/item/${id}`);
+        const res = await axios.get(`/api/products/item/${id}`, {
+          signal: controller.signal,
+        });
         setProduct(res.data);
       } catch (err) {
-        console.error("Error fetching product:", err);
+        toast.error("Failed to load product");
+      } finally {
+        setLoading(false);
       }
     }
-    fetchProduct();
+
+    if (id) fetchProduct();
+    return () => controller.abort();
   }, [id]);
 
-  if (!product)
+  const images = useMemo(
+    () =>
+      product
+        ? product.images?.length
+          ? product.images
+          : [product.image]
+        : [],
+    [product]
+  );
+
+  const formatPrice = (val) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(val);
+
+  const addToCart = useCallback(async () => {
+    try {
+      await axios.post("/api/cart", { productId: product._id, quantity: 1 });
+      toast.success("Added to cart");
+    } catch {
+      toast.error("Failed to add to cart");
+    }
+  }, [product]);
+
+  const addToWishlist = useCallback(async (item) => {
+    try {
+      await axios.post("/api/wishlist", {
+        productId: item._id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+      });
+      toast.success("Added to wishlist ❤️");
+    } catch {
+      toast.error("Failed to add to wishlist");
+    }
+  }, []);
+
+  if (loading || !product)
     return (
-      <p className="text-center py-20 text-gray-500 text-lg">Loading product...</p>
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-64 bg-gray-300 rounded-xl" />
+          <div className="h-6 w-3/4 bg-gray-300 rounded-md" />
+        </div>
+      </div>
     );
 
-  const images = product.images || [product.image]; // array of images
-
-  const prevImage = () => {
-    setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-  const nextImage = () => {
-    setCurrentImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
   return (
-    <div className="max-w-6xl mx-auto p-6 relative">
+    <article className="max-w-6xl mx-auto p-6">
       {/* Carousel */}
-      <div className="relative w-full mb-8">
-        <img
-          src={images[currentImage]}
-          alt={product.name}
-          className="w-full h-[450px] object-cover rounded-xl shadow-lg"
-        />
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={prevImage}
-              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <button
-              onClick={nextImage}
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
-            >
-              <ChevronRight size={24} />
-            </button>
-          </>
-        )}
-      </div>
+      <ImageCarousel
+        images={images}
+        currentImage={currentImage}
+        setCurrentImage={setCurrentImage}
+      />
 
-      {/* Product Info */}
-      <div className="bg-white p-6 rounded-xl shadow-md flex flex-col md:flex-row gap-8">
-        <div className="flex-1 flex flex-col gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold">{product.name}</h1>
-          <p className="text-xl font-semibold text-blue-600">
-            ${product.price}
-          </p>
-          <p className="text-gray-500">Category: {product.category}</p>
-
-          {/* Tabs */}
-          <div className="flex gap-4 mt-6 border-b">
-            <button
-              onClick={() => setActiveTab("description")}
-              className={`pb-2 ${
-                activeTab === "description" ? "border-b-2 border-blue-500 text-blue-500 font-semibold" : "text-gray-500"
-              }`}
-            >
-              Description
-            </button>
-            <button
-              onClick={() => setActiveTab("specs")}
-              className={`pb-2 ${
-                activeTab === "specs" ? "border-b-2 border-blue-500 text-blue-500 font-semibold" : "text-gray-500"
-              }`}
-            >
-              Specs
-            </button>
-            <button
-              onClick={() => setActiveTab("reviews")}
-              className={`pb-2 ${
-                activeTab === "reviews" ? "border-b-2 border-blue-500 text-blue-500 font-semibold" : "text-gray-500"
-              }`}
-            >
-              Reviews
-            </button>
-          </div>
-
-          <div className="mt-4 text-gray-700">
-            {activeTab === "description" && <p>{product.description}</p>}
-            {activeTab === "specs" && (
-              <ul className="list-disc list-inside">
-                <li>High performance laptop</li>
-                <li>Fast processor and RAM</li>
-                <li>Lightweight and portable</li>
-                <li>Long battery life</li>
-              </ul>
-            )}
-            {activeTab === "reviews" && <p>No reviews yet.</p>}
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-4 mt-6">
-            <button className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
-              <ShoppingCart size={18} /> Add to Cart
-            </button>
-            <button className="flex items-center gap-2 bg-gray-200 text-red-500 px-6 py-3 rounded-lg hover:bg-red-400 hover:text-white transition">
-              <Heart size={18} /> Add to Wishlist
-            </button>
-          </div>
-        </div>
-
-        {/* Side Image / Placeholder */}
-        <div className="flex-1 hidden md:flex justify-center items-center">
-          <img
-            src={images[currentImage]}
-            alt={product.name}
-            className="w-72 h-72 object-cover rounded-lg shadow-md"
+      {/* Product Content */}
+      <section
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gradient-to-b
+      from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 p-6 rounded-xl shadow-md"
+      >
+        <div className="flex flex-col gap-4">
+          <ProductHeader product={product} formatPrice={formatPrice} />
+          <ProductTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            product={product}
+          />
+          <ProductActions
+            addToCart={addToCart}
+            addToWishlist={addToWishlist}
+            product={product}
           />
         </div>
-      </div>
+
+        <ProductAside
+          product={product}
+          images={images}
+          currentImage={currentImage}
+        />
+      </section>
 
       {/* Floating Buy Button */}
-      <button className="fixed bottom-6 right-6 flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition z-50">
-        <ShoppingCart size={18} /> Buy Now
-      </button>
-    </div>
+      <Link href="/purchaseUnavailable">
+        <motion.button
+          whileHover={!prefersReducedMotion ? { scale: 1.03 } : {}}
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-red-600 to-red-500 
+          text-white px-6 py-3 rounded-full shadow-lg"
+        >
+          Buy Now
+        </motion.button>
+      </Link>
+    </article>
   );
 }
