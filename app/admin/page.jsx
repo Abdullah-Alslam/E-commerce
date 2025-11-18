@@ -1,31 +1,34 @@
 "use client";
 import { useState } from "react";
-import Sidebar from "./Sidebar";
-import AddProduct from "./AddProduct";
-import ManageProducts from "./MangeProducts";
-import DashboardOverview from "./DashboardOverView";
-import Users from "./Users";
-import GeneralSettings from "./generalSettings";
-import AddUser from "./AddUser";
+import Sidebar from "./sidebar/Sidebar";
+import AddProduct from "./addproduct/AddProduct";
+import ManageProducts from "./mangeproducts/MangeProducts";
+import Users from "./users/Users";
+import GeneralSettings from "./generalsettings/GeneralSettings";
+import AddUser from "./adduser/AddUser";
+import ProtectedRoute from "../components/ProtectedRoute";
+import DashboardOverview from "./dashboardoverview/DashboardOverView";
 
 export default function AdminPage() {
   const [section, setSection] = useState("dashboard");
   const [over, setOver] = useState("");
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <Sidebar setSection={setSection} setOver={setOver} />
+    <ProtectedRoute>
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <Sidebar setSection={setSection} setOver={setOver} />
 
-      {/* Pages */}
-      {section === "dashboard" && (
-        <DashboardOverview setSection={setSection} setOver={setOver} />
-      )}
-      {section === "add"   && <AddProduct />}
-      {section === "manage" && <ManageProducts />}
-      {section === "users" && <Users />}
-      {section === "settings" && <GeneralSettings />}
-      {section === "add user" && <AddUser />}
-    </div>
+        {/* Pages */}
+        {section === "dashboard" && (
+          <DashboardOverview setSection={setSection} setOver={setOver} />
+        )}
+        {section === "add" && <AddProduct />}
+        {section === "manage" && <ManageProducts />}
+        {section === "users" && <Users />}
+        {section === "settings" && <GeneralSettings />}
+        {section === "add user" && <AddUser />}
+      </div>
+    </ProtectedRoute>
   );
 }
