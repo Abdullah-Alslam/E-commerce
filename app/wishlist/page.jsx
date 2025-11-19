@@ -1,4 +1,4 @@
-// app/wishlist/page.jsx
+"use client";
 import WishlistInfo from "./WishlisetInfo";
 
 export default function Wishlist() {
