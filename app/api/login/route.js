@@ -43,8 +43,8 @@ export async function POST(req) {
       );
     }
 
-    const adminEmail = "admin@gmail.com";
-    const role = email === adminEmail ? "admin" : "user";
+    // Role comes ONLY from database
+    const role = user.role;
 
     const token = jwt.sign(
       { userId: user._id, name: user.name, email: user.email, role },
@@ -52,7 +52,6 @@ export async function POST(req) {
       { expiresIn: "7d" }
     );
 
-    // 🧠 الخطوة المهمة: إنشاء الرد
     const response = NextResponse.json(
       {
         message: "Login successful",
@@ -63,17 +62,17 @@ export async function POST(req) {
       { status: 200 }
     );
 
-    // 🍪 إضافة الكوكي
-    response.cookies.set("token", token, {
-      httpOnly: true, // أمان ضد XSS
-      secure: process.env.NODE_ENV === "production", // فقط https بالإنتاج
+    response.cookies.set("userId", user._id.toString(), {
+      httpOnly: false,
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60, // 7 أيام
+      maxAge: 7 * 24 * 60 * 60,
       path: "/",
     });
 
-    response.cookies.set("userId", user._id.toString(), {
-      httpOnly: false, // مسموح الوصول إليه من client
+    // Token in HttpOnly cookie
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: false,
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60,
       path: "/",
