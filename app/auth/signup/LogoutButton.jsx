@@ -10,9 +10,9 @@ export default function LogoutButton() {
 
   async function handleLogout() {
     try {
-      const res= await axios.post("/api/logout");
+      const res = await axios.post("/api/logout");
       console.log(res);
-      
+
       cookie.remove("token", { path: "/" });
       router.push("/auth/login");
     } catch (err) {
@@ -23,7 +23,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+      className="px-4 py-2 text-white transition bg-red-600 rounded hover:bg-red-700"
     >
       Logout
     </button>
