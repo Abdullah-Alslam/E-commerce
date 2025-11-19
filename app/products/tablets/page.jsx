@@ -9,7 +9,7 @@ export default function TabletsPage() {
       category="Tablets"
       title="Our Latest Tablets"
       product="tablet"
-      link="/images/sandesh-sharma-nER40PGjTPE-unsplash.jpg"
+      link="/images/tab-section.jpg"
     />
   );
 }

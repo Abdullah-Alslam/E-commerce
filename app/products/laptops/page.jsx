@@ -9,7 +9,7 @@ export default function LaptopsPage() {
       title="Our Latest Laptops"
       product="Laptops"
       category="Laptops"
-      link="/images/przemyslaw-marczynski-OUPW0koc2Wg-unsplash.jpg"
+      link="/images/laptop-section.jpg"
     />
   );
 }

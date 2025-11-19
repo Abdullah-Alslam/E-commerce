@@ -8,7 +8,7 @@ export default function AccessoriesPage() {
       title="Our Accessories"
       product="Accessories"
       category="Accessories"
-      link="/images/padraig-treanor-m6Ap3_BkaQI-unsplash.jpg"
+      link="/images/accessories-section.jpg"
     />
   );
 }

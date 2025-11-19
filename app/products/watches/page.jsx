@@ -8,7 +8,7 @@ export default function SmartWatchesPage() {
       category="Smart Watches"
       title="Our Latest Smart Watches"
       product="smart watches"
-      link="/images/toni-g--LbpO-8MEFw-unsplash.jpg  "
+      link="/images/watch-section.jpg "
     />
   );
 }
