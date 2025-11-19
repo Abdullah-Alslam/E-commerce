@@ -1,10 +1,17 @@
+// app/api/auth/logout/route.js
 import { NextResponse } from "next/server";
-import Cookie from "cookie-universal";
 
 export async function POST() {
-  const cookie = Cookie();
-  
-  cookie.remove("token", { path: "/" });
+  const res = NextResponse.json({ message: "Logged out successfully" });
 
-  return NextResponse.json({ message: "Logged out successfully" });
+  // Remove the token cookie
+  res.cookies.set("token", "", {
+    path: "/",
+    httpOnly: true, // same as when set
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0, // expire immediately
+    sameSite: "strict",
+  });
+
+  return res;
 }
