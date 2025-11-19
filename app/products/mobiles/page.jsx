@@ -1,9 +1,7 @@
 // app/mobiles/page.js
 "use client";
 
-import ProductsList from "../../components/ui/ProductsList";
-
-
+import ProductsList from "../../components/Product/ProductsList";
 
 export default function MobilesPage() {
   return (
@@ -11,7 +9,7 @@ export default function MobilesPage() {
       title="Our Latest Mobiles"
       product="mobiles"
       category="Mobiles"
-      link="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9" // صورة تمثيلية للموبايلات
+      link="/images/mobile-section.jpg"
     />
   );
 }

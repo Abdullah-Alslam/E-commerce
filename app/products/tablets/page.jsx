@@ -1,8 +1,7 @@
 // app/mobiles/page.js
 "use client";
 
-import ProductsList from "../../components/ui/ProductsList";
-
+import ProductsList from "../../components/Product/ProductsList";
 
 export default function TabletsPage() {
   return (
@@ -10,7 +9,7 @@ export default function TabletsPage() {
       category="Tablets"
       title="Our Latest Tablets"
       product="tablet"
-      link="https://images.unsplash.com/photo-1587825140708-bb8b07e20439?auto=format&fit=crop&w=800&q=80"
+      link="/images/sandesh-sharma-nER40PGjTPE-unsplash.jpg"
     />
   );
 }

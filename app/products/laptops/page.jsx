@@ -1,9 +1,7 @@
 // app/laptops/page.jsx
 "use client";
 
-import ProductsList from "../../components/ui/ProductsList";
-
-
+import ProductsList from "../../components/Product/ProductsList";
 
 export default function LaptopsPage() {
   return (
@@ -11,7 +9,7 @@ export default function LaptopsPage() {
       title="Our Latest Laptops"
       product="Laptops"
       category="Laptops"
-      link="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+      link="/images/przemyslaw-marczynski-OUPW0koc2Wg-unsplash.jpg"
     />
   );
 }
