@@ -12,7 +12,10 @@ export default function InputField({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={name} className="text-sm font-medium text-gray-800 dark:text-gray-100">
+      <label
+        htmlFor={name}
+        className="text-sm font-medium text-gray-800 dark:text-gray-100"
+      >
         {label}
       </label>
       <div className="relative">
@@ -29,7 +32,7 @@ export default function InputField({
           <button
             type="button"
             onClick={toggleHandler}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            className="absolute text-gray-500 transform -translate-y-1/2 right-3 top-1/2 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           >
             {type === "password" ? "👁️" : "🙈"}
           </button>

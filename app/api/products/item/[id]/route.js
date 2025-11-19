@@ -1,6 +1,6 @@
 import connectDB from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import Product from "../../../../models/Products"
+import Product from "../../../../models/Products";
 
 export async function GET(req, { params }) {
   try {
@@ -25,7 +25,9 @@ export async function PUT(req, { params }) {
     const { id } = params;
     const body = await req.json();
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, body, { new: true });
+    const updatedProduct = await Product.findByIdAndUpdate(id, body, {
+      new: true,
+    });
     if (!updatedProduct) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }

@@ -2,7 +2,6 @@
 
 import SignupForm from "./SignupForm";
 
-
 //  Metadata for SEO
 export const metadata = {
   title: "Create New Account - MyWebsite",
@@ -21,5 +20,5 @@ export const metadata = {
 };
 
 export default function SignupPage() {
-  return <SignupForm/>
+  return <SignupForm />;
 }

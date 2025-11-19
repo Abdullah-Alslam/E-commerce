@@ -8,7 +8,7 @@ const tabs = [
   { id: "orders", label: "Orders", icon: <Package size={20} /> },
   { id: "addresses", label: "Addresses", icon: <MapPin size={20} /> },
   { id: "wishlist", label: "Wishlist", icon: <Heart size={20} /> },
-  { id: "cart", label: "CartTab", icon: <CarFront size={20} /> },
+  { id: "cart", label: "Cart", icon: <CarFront size={20} /> },
   { id: "security", label: "Security", icon: <Lock size={20} /> },
 ];
 

@@ -6,8 +6,9 @@ export async function GET() {
   try {
     await connectDB();
 
-    // 🔹 رجع المنتجات يلي عليها hotDeal فقط
-    const hotDeals = await Product.find({ hotDeal: true }).sort({ createdAt: -1 });
+    const hotDeals = await Product.find({ hotDeal: true }).sort({
+      createdAt: -1,
+    });
 
     return NextResponse.json(hotDeals, { status: 200 });
   } catch (err) {

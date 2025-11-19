@@ -26,6 +26,8 @@ export default function ManageUsers() {
     try {
       setLoading(true);
       const res = await axios.get("/api/users");
+      console.log(res);
+
       setUsers(res.data);
     } catch (err) {
       toast.error("Failed to fetch users 😢");

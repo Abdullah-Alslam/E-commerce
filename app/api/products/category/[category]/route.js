@@ -10,7 +10,7 @@ export async function GET(req, { params }) {
     const products = await Product.find({ category });
     return NextResponse.json(products, { status: 200 });
   } catch (err) {
-      console.error("❌ MongoDB connection failed:", err);
+    console.error("❌ MongoDB connection failed:", err);
 
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

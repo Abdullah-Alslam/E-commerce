@@ -1,5 +1,5 @@
 // app/contact/page.jsx
-import ProtectedRoute from "../components/ProtectedRoute";
+import UnauthorizedPage from "../401/page";
 import ContactInfo from "./ContactInfo";
 
 export const metadata = {
@@ -46,9 +46,5 @@ export const metadata = {
 };
 
 export default function Contact() {
-  return (
-    <ProtectedRoute>
-      <ContactInfo />
-    </ProtectedRoute>
-  );
+  return <ContactInfo />;
 }

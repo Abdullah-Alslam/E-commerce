@@ -8,5 +8,6 @@ const SupportSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Support = mongoose.models.Support || mongoose.model("Support", SupportSchema);
+const Support =
+  mongoose.models.Support || mongoose.model("Support", SupportSchema);
 export default Support;

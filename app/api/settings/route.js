@@ -45,7 +45,7 @@ export async function PUT(req) {
         storeName: body.storeName,
         about: body.about || "",
       },
-      { new: true, upsert: true } // ← ينشئ إذا غير موجود
+      { new: true, upsert: true } 
     );
 
     return NextResponse.json(updatedSettings);

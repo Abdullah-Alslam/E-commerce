@@ -6,15 +6,15 @@ import ManageProducts from "./mangeproducts/MangeProducts";
 import Users from "./users/Users";
 import GeneralSettings from "./generalsettings/GeneralSettings";
 import AddUser from "./adduser/AddUser";
-import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardOverview from "./dashboardoverview/DashboardOverView";
+import ProtectedRoute from "../roleMiddleware";
 
 export default function AdminPage() {
   const [section, setSection] = useState("dashboard");
   const [over, setOver] = useState("");
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["admin"]}>
       <div className="flex h-screen">
         {/* Sidebar */}
         <Sidebar setSection={setSection} setOver={setOver} />

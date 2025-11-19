@@ -13,13 +13,19 @@ export default function ImageUploader({ onUploadedUrl }) {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+      );
 
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await res.json();
       setImageUrl(data.secure_url);
@@ -35,19 +41,27 @@ export default function ImageUploader({ onUploadedUrl }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <label className="cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 transition">
+      <label className="px-4 py-2 text-white transition bg-indigo-600 rounded-md cursor-pointer hover:bg-indigo-500">
         Select Image
-        <input type="file" accept="image/*" onChange={handleFile} className="hidden" />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFile}
+          className="hidden"
+        />
       </label>
 
       {loading && (
-        <p className="text-sm text-gray-600 dark:text-gray-300 animate-pulse">Uploading...</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 animate-pulse">
+          Uploading...
+        </p>
       )}
 
       {imageUrl && (
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-green-600 font-medium">✅ Image uploaded successfully!</p>
-         
+          <p className="text-sm font-medium text-green-600">
+            ✅ Image uploaded successfully!
+          </p>
         </div>
       )}
     </div>

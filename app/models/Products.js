@@ -5,12 +5,11 @@ const ProductSchema = new mongoose.Schema(
     name: { type: String, required: true },
     price: { type: Number, required: true },
     description: { type: String },
-    image: { type: String, required: true }, // رابط الصورة من Cloudinary
+    image: { type: String, required: true },
     category: { type: String, required: true },
 
-    // 🔹 إضافات العروض
-    discount: { type: Number, default: 0 }, // نسبة الخصم %
-    hotDeal: { type: Boolean, default: false }, // إذا العرض مميز
+    discount: { type: Number, default: 0 },
+    hotDeal: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

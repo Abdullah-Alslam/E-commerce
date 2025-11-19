@@ -8,7 +8,10 @@ export async function GET() {
     const items = await Wishlist.find();
     return NextResponse.json(items);
   } catch (err) {
-    return NextResponse.json({ error: "Error fetching wishlist" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error fetching wishlist" },
+      { status: 500 }
+    );
   }
 }
 

@@ -27,7 +27,7 @@ export default function OrdersTab() {
 
       {/* Title */}
       <motion.h2
-        className="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400 mb-2"
+        className="mb-2 text-2xl font-bold text-red-600 md:text-3xl dark:text-red-400"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -37,12 +37,13 @@ export default function OrdersTab() {
 
       {/* Description */}
       <motion.p
-        className="text-gray-700 dark:text-gray-300 mb-6 max-w-md"
+        className="max-w-md mb-6 text-gray-700 dark:text-gray-300"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        You currently have no orders. This feature is disabled for this demo, but you can check back later when the system is fully functional.
+        You currently have no orders. This feature is disabled for this demo,
+        but you can check back later when the system is fully functional.
       </motion.p>
 
       {/* Action Button */}
@@ -50,7 +51,7 @@ export default function OrdersTab() {
         onClick={handleClick}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="px-6 py-3 bg-red-600 dark:bg-red-500 text-white rounded-lg shadow hover:bg-red-700 dark:hover:bg-red-600 transition"
+        className="px-6 py-3 text-white transition bg-red-600 rounded-lg shadow dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600"
       >
         Notify Me
       </motion.button>

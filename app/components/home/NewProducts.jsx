@@ -39,13 +39,11 @@ export default function NewProducts() {
     if (index > 0) setIndex(index - 1);
   };
 
-  // ✅ addToCart function
   const addToCart = useCallback(async (item) => {
     if (!item?._id) {
       toast.error("Product ID not found!");
       return;
     }
-
     try {
       setActionLoading(true);
       await axios.post("/api/cart", {
@@ -65,21 +63,21 @@ export default function NewProducts() {
   }, []);
 
   return (
-    <section className="relative py-16 px-4 sm:px-10 bg-gray-50 dark:bg-gray-900">
-      <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">
+    <section className="relative px-4 py-16 sm:px-10 bg-gray-50 dark:bg-gray-900">
+      <h2 className="mb-12 text-3xl font-bold text-center dark:text-white">
         🆕 New Arrivals
       </h2>
 
       {/* Navigation Buttons */}
       <button
         onClick={handlePrev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white dark:bg-gray-800 shadow-lg p-2 rounded-full hover:scale-110 transition"
+        className="absolute z-20 p-2 transition -translate-y-1/2 bg-white rounded-full shadow-lg left-2 top-1/2 dark:bg-gray-800 hover:scale-110"
       >
         <ChevronLeft className="w-6 h-6 text-gray-700 dark:text-white" />
       </button>
       <button
         onClick={handleNext}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white dark:bg-gray-800 shadow-lg p-2 rounded-full hover:scale-110 transition"
+        className="absolute z-20 p-2 transition -translate-y-1/2 bg-white rounded-full shadow-lg right-2 top-1/2 dark:bg-gray-800 hover:scale-110"
       >
         <ChevronRight className="w-6 h-6 text-gray-700 dark:text-white" />
       </button>
@@ -88,42 +86,42 @@ export default function NewProducts() {
       <div className="overflow-hidden">
         <motion.div
           className="flex gap-5"
-          animate={{ x: `-${index * 20}%` }}
+          animate={{ x: `-${index * 22}%` }}
           transition={{ type: "spring", stiffness: 80, damping: 15 }}
         >
           {products.map((p, i) => (
             <motion.div
               key={i}
-              whileHover={{ y: -8, scale: 1.03 }}
-              className="min-w-[20%] bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden group relative"
+              whileHover={{ y: -10, scale: 1.05 }}
+              className="min-w-[22%] bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden group relative transition-transform duration-300"
             >
               {/* Tags */}
-              <div className="absolute top-3 left-3 z-10 flex gap-2">
+              <div className="absolute z-10 flex gap-2 top-3 left-3">
                 {p.isNew && (
-                  <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                  <span className="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-lg">
                     NEW
                   </span>
                 )}
                 {p.discount && (
-                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
+                  <span className="px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded-lg">
                     -{p.discount}%
                   </span>
                 )}
               </div>
 
               {/* Product Image */}
-              <div className="relative w-full h-36 overflow-hidden">
+              <div className="relative w-full h-48 overflow-hidden">
                 <Image
                   src={p.image || "/images/default-product.png"}
                   alt={p.name}
                   fill
-                  className="object-contain group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 {/* Quick View Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <div className="absolute inset-0 flex items-center justify-center transition opacity-0 bg-black/0 group-hover:bg-black/30 group-hover:opacity-100">
                   <button
                     onClick={() => router.push(`/products/${p._id}`)}
-                    className="flex items-center gap-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-1.5 rounded-full font-semibold text-sm"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-800 transition-transform bg-white rounded-full shadow-lg dark:bg-gray-700 dark:text-white hover:scale-105"
                   >
                     <Eye size={16} /> Quick View
                   </button>
@@ -131,28 +129,28 @@ export default function NewProducts() {
               </div>
 
               {/* Text */}
-              <div className="p-3 text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="p-4 text-center">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   {p.category}
                 </p>
-                <h3 className="font-semibold dark:text-white text-base mt-1 line-clamp-1">
+                <h3 className="mt-2 text-lg font-bold dark:text-white line-clamp-1">
                   {p.name}
                 </h3>
-                <div className="flex justify-center items-center gap-1 mt-2 text-yellow-500">
+                <div className="flex items-center justify-center gap-1 mt-3 text-yellow-400">
                   {[...Array(5)].map((_, star) => (
                     <Star
                       key={star}
-                      size={16}
+                      size={18}
                       fill={star < p.rating ? "currentColor" : "none"}
                     />
                   ))}
                 </div>
-                <div className="mt-2">
-                  <span className="text-red-600 font-bold">
+                <div className="mt-3">
+                  <span className="text-xl font-extrabold text-red-600">
                     ${p.price?.toFixed(2)}
                   </span>
                   {p.oldPrice && (
-                    <span className="text-gray-400 line-through ml-2 text-sm">
+                    <span className="ml-2 text-sm text-gray-400 line-through">
                       ${p.oldPrice?.toFixed(2)}
                     </span>
                   )}
@@ -163,9 +161,9 @@ export default function NewProducts() {
               <button
                 onClick={() => addToCart(p)}
                 disabled={actionLoading}
-                className="absolute bottom-0 left-0 right-0 bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-t-none rounded-b-2xl flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition disabled:opacity-50"
+                className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-3 py-3 font-semibold text-white transition bg-red-600 rounded-t-none shadow-lg opacity-0 hover:bg-red-700 rounded-b-3xl group-hover:opacity-100 disabled:opacity-50"
               >
-                <ShoppingCart size={18} /> Add to Cart
+                <ShoppingCart size={20} /> Add to Cart
               </button>
             </motion.div>
           ))}

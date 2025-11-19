@@ -16,7 +16,7 @@ export default function SignupForm() {
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
-  
+
   // HandleSubmit
   async function handleSubmit(e) {
     e.preventDefault();
@@ -31,6 +31,8 @@ export default function SignupForm() {
     setLoading(true);
     try {
       const res = await axios.post("/api/signup", form);
+      console.log(res);
+
       if (res.status === 201) {
         toast.success("Account created! Redirecting...");
         setTimeout(() => router.push("/auth/login"), 900);
@@ -48,14 +50,14 @@ export default function SignupForm() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white dark:from-neutral-900 dark:to-[#050507] px-4 py-12">
         <div className="w-full max-w-md bg-white/80 dark:bg-[#0b0c0f]/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6 sm:p-8">
           {/* Header */}
-          <div className="text-center mb-6">
+          <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               MyWebsite
             </h1>
             <h2 className="mt-2 text-xl font-semibold text-gray-900 dark:text-white">
               Create Account
             </h2>
-            <p className="mt-1 text-gray-600 dark:text-gray-300 text-sm">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
               Sign up to access all features quickly and securely.
             </p>
           </div>
@@ -67,7 +69,7 @@ export default function SignupForm() {
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder='Enter yor name please'
+              placeholder="Enter yor name please"
             />
             <InputField
               label="Email"
@@ -75,7 +77,7 @@ export default function SignupForm() {
               type="email"
               value={form.email}
               onChange={handleChange}
-              placeholder='Enter your email please'
+              placeholder="Enter your email please"
             />
             <InputField
               label="Password"
@@ -83,7 +85,7 @@ export default function SignupForm() {
               type="password"
               value={form.password}
               onChange={handleChange}
-              placeholder='Enter your password please'
+              placeholder="Enter your password please"
             />
 
             <button
@@ -95,13 +97,13 @@ export default function SignupForm() {
                   : "bg-[#E30613] hover:bg-[#b20410]"
               }`}
             >
-              {loading && <Loader2 className="h-5 w-5 animate-spin" />}
+              {loading && <Loader2 className="w-5 h-5 animate-spin" />}
               {loading ? "Creating..." : "Create Account"}
             </button>
           </form>
 
           {/* Footer */}
-          <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
+          <div className="mt-4 text-sm text-center text-gray-600 dark:text-gray-300">
             Already have an account?{" "}
             <span
               className="text-[#E30613] cursor-pointer hover:underline"
@@ -111,7 +113,7 @@ export default function SignupForm() {
             </span>
           </div>
 
-          <p className="mt-5 text-center text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-5 text-xs text-center text-gray-500 dark:text-gray-400">
             By creating an account you agree to our Terms & Privacy.
           </p>
         </div>

@@ -6,7 +6,7 @@ import NewsTicker from "./components/home/NewsTicker";
 import Categories from "./components/home/Categories";
 import HotDeals from "./components/home/HotDeals";
 import LoadingSkeleton from "./components/home/LoadingSkeleton";
-import NewProducts from "./components/home/NewProducts"
+import NewProducts from "./components/home/NewProducts";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,12 +21,12 @@ export default function HomePage() {
   if (loading) return <LoadingSkeleton />;
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 pb-16">
+    <main className="min-h-screen pb-16 transition-colors duration-300 bg-white dark:bg-gray-900">
       <ToastContainer position="top-center" autoClose={2000} />
       <Hero />
       <NewsTicker />
       <Categories />
-      <NewProducts/>
+      <NewProducts />
       <HotDeals />
     </main>
   );
