@@ -3,16 +3,16 @@ import bcrypt from "bcryptjs";
 import connectToDatabase from "@/lib/mongodb";
 import mongoose from "mongoose";
 
-// UserSchema
+// User Schema
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, default: "user" }, 
+  role: { type: String, default: "user" },
   createdAt: { type: Date, default: Date.now },
 });
 
-// hot reload
+// Hot reload
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export async function POST(req) {
@@ -28,7 +28,6 @@ export async function POST(req) {
 
     await connectToDatabase();
 
-    // Existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -37,28 +36,31 @@ export async function POST(req) {
       );
     }
 
-    // NEW USER
+    // Force role from backend only
+    const adminEmail = "admin@gmail.com";
+    const assignedRole = email === adminEmail ? "admin" : "user";
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
-      role: "user", 
+      role: assignedRole,
     });
 
     return NextResponse.json(
       {
         message: "User registered successfully",
         userId: newUser._id,
-        role: newUser.role, // 
+        role: newUser.role,
       },
       { status: 201 }
     );
   } catch (err) {
-    console.error("Signup error:", err.message);
+    console.error("Signup error:", err);
     return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
