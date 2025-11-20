@@ -8,7 +8,6 @@ import OrdersTab from "./orders/OrdersTab";
 import AddressesTab from "./addresses/AddressesTab";
 import WishlistTab from "./wishlist/WishlistTab";
 import SecurityTab from "./security/SecurityTab";
-import ProtectedRoute from "../components/ProtectedRoute";
 import Cart from "./cart/Cart";
 
 export default function AccountPage() {
@@ -26,7 +25,6 @@ export default function AccountPage() {
   };
 
   return (
-    <ProtectedRoute>
       <div className="flex justify-center min-h-screen px-4 py-10 pb-16 bg-gray-50 dark:bg-gray-900 sm:px-6 lg:px-8">
         <div className="flex flex-col w-full overflow-hidden bg-white shadow-xl max-w-7xl dark:bg-gray-800 rounded-2xl md:flex-row">
           {/* Sidebar */}
@@ -48,6 +46,5 @@ export default function AccountPage() {
           </main>
         </div>
       </div>
-    </ProtectedRoute>
   );
 }
