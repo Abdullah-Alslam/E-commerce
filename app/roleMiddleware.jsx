@@ -14,7 +14,7 @@ export default function ProtectedRoute({
       try {
         const res = await axios.get("/api/users/me", { withCredentials: true });
         setRole(res.data.role);
-        console.log(res);
+        console.log("the role is" ,res);
         
       } catch (err) {
         console.log(err);
