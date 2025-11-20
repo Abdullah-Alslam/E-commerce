@@ -19,30 +19,33 @@ export default function SignupForm() {
 
   // HandleSubmit
   async function handleSubmit(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!form.name || !form.email || !form.password) {
-      return toast.error("Fill all fields");
-    }
-    if (form.password.length < 6) {
-      return toast.error("Password too short");
-    }
-
-    setLoading(true);
-    try {
-      const res = await axios.post("/api/signup", form);
-      console.log(res);
-
-      if (res.status === 201) {
-        toast.success("Account created! Redirecting...");
-        setTimeout(() => router.push("/auth/login"), 900);
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+  if (!form.name || !form.email || !form.password) {
+    return toast.error("Fill all fields");
   }
+  if (form.password.length < 6) {
+    return toast.error("Password too short");
+  }
+
+  setLoading(true);
+  try {
+    const res = await axios.post("/api/signup", form);
+    console.log("Signup response:", res.data); // هنا لازم يظهر role
+
+    if (res.status === 201) {
+      const { role } = res.data; // استخرج الدور
+      localStorage.setItem("userRole", role); // حفظ الدور لو بدك تستخدمه لاحقًا
+      toast.success(`Account created! Role: ${role}`);
+      setTimeout(() => router.push("/auth/login"), 900);
+    }
+  } catch (err) {
+    toast.error(err.response?.data?.error || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+}
+
 
   return (
     <>

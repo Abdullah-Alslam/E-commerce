@@ -36,12 +36,13 @@ export async function POST(req) {
       );
     }
 
-    // Force role from backend only
+    // Assign role
     const adminEmail = "admin@gmail.com";
     const assignedRole = email === adminEmail ? "admin" : "user";
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create user
     const newUser = await User.create({
       name,
       email,
@@ -49,11 +50,14 @@ export async function POST(req) {
       role: assignedRole,
     });
 
+    // Convert to plain object
+    const userData = newUser.toObject();
+
     return NextResponse.json(
       {
         message: "User registered successfully",
-        userId: newUser._id,
-        role: newUser.role,
+        userId: userData._id.toString(),
+        role: userData.role,
       },
       { status: 201 }
     );
