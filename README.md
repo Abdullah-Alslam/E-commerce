@@ -10,17 +10,20 @@ Live Preview 👉 **https://e-commerce-two-liart-4fbqvqbaro.vercel.app/**
 ## 🚀 Features Overview
 
 ### 👤 User Account
+
 - Profile management (name, email, password)
 - Order history
 - Address management
 - Security page for updating password
 
 ### ❤️ Wishlist
+
 - Add/remove items
 - Instant UI update (Optimistic UI)
 - Fully responsive for all devices
 
 ### 🛒 Shopping Cart
+
 - Update quantity
 - Automatic total calculation
 - Smooth animations using **Framer Motion**
@@ -28,15 +31,18 @@ Live Preview 👉 **https://e-commerce-two-liart-4fbqvqbaro.vercel.app/**
 - Skeleton loaders for better UX
 
 ### 🌙 Dark Mode
+
 - Full system for light/dark theme
 - Saved using localStorage
 
 ### 📱 Responsive Design
+
 Optimized for:
-- Mobile  
-- Tablet  
-- Desktop  
-- Ultra-wide screens  
+
+- Mobile
+- Tablet
+- Desktop
+- Ultra-wide screens
 
 ---
 
@@ -46,12 +52,15 @@ Optimized for:
 > **`public/screenshots/`**
 
 ### 🛍️ Mobiles Page
+
 ![Mobiles Page](./public/screenshots/mobile.png)
 
 ### 💻 Laptops Page
+
 ![Laptops Page](./public/screenshots/laptop.png)
 
 ### 🔐 Admin Dashboard
+
 ![Admin Page](./public/screenshots/admin-panel.png)
 
 ---
@@ -59,6 +68,7 @@ Optimized for:
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - Next.js 15
 - React
 - Tailwind CSS
@@ -66,10 +76,12 @@ Optimized for:
 - Axios
 
 ### Backend
+
 - Next.js API Routes
 - MongoDB & Mongoose
 
 ### Extras
+
 - Toast notifications
 - Loading skeletons
 - Optimistic UI
@@ -80,6 +92,8 @@ Optimized for:
 ## ⚡ Getting Started
 
 ### 1️⃣ Clone the repo
+
 ```bash
 git clone https://github.com/yourusername/e-commerce.git
 cd e-commerce
+```
