@@ -93,12 +93,11 @@ Optimized for:
 
 ### 1️⃣ Clone the repo
 
-```bash
+````bash
 git clone https://github.com/yourusername/e-commerce.git
 cd e-commerce
 
 ``` ADMIN-ACCOUNT
 
 Email: admin@gmail.com
-Password: 123123
-```
+````
