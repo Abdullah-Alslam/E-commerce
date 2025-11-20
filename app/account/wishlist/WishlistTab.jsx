@@ -1,9 +1,11 @@
-import WishlistPage from "../../wishlist/page";
+"use client"
+
+import WPage from "../../wishlist/page";
 
 export default function WishlistTab() {
   return (
     <div>
-      <WishlistPage />
+      <WPage />
     </div>
   );
 }

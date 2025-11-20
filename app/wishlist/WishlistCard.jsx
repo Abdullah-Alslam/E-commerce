@@ -1,60 +1,65 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Heart, Trash2, ShoppingCart } from "lucide-react";
 
 export default function WishlistCard({
   item,
+  removing,
+  adding,
   deleteWishlist,
   addToCart,
-  addingToCart,
 }) {
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+      exit={{ opacity: 0, scale: 0.8 }}
+      className="p-5 transition-all duration-300 bg-white shadow-lg dark:bg-gray-800 rounded-2xl hover:shadow-xl"
     >
       <motion.img
         src={item.image}
-        alt={item.name}
-        className="w-full h-64 object-cover"
-        whileHover={{ scale: 1.05 }}
+        alt={item.title}
+        className="object-cover w-full h-56 rounded-xl"
+        whileHover={{ scale: 1.02 }}
       />
 
-      <motion.button
-        onClick={() => deleteWishlist(item._id)}
-        whileHover={{ scale: 1.1 }}
-        className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition"
-        title="Remove"
-      >
-        🗑
-      </motion.button>
+      <h2 className="mt-4 text-xl font-bold text-gray-800 dark:text-gray-200">
+        {item.title}
+      </h2>
 
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 truncate">
-          {item.name}
-        </h2>
+      <p className="mt-1 text-lg font-semibold text-red-600 dark:text-red-400">
+        ${item.price}
+      </p>
 
-        <p className="text-xl font-semibold text-red-500 dark:text-red-400 mb-6">
-          ${item.price}
-        </p>
-
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-          disabled={addingToCart === item._id}
+      <div className="flex gap-3 mt-6">
+        {/* ADD TO CART BUTTON */}
+        <button
           onClick={() => addToCart(item)}
-          className={`w-full py-3 font-bold rounded-xl transition-all shadow-md ${
-            addingToCart === item._id
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-red-500 to-orange-500 hover:from-orange-500 hover:to-red-500 text-white"
-          }`}
+          disabled={adding === item._id}
+          className="flex items-center justify-center flex-1 py-2 text-white transition-all bg-red-600 rounded-xl hover:bg-red-700 disabled:opacity-50"
         >
-          {addingToCart === item._id ? "Adding..." : "Add to Cart 🛒"}
-        </motion.button>
+          {adding === item._id ? (
+            "Adding..."
+          ) : (
+            <>
+              <ShoppingCart size={18} className="mr-2" /> Add to Cart
+            </>
+          )}
+        </button>
+
+        {/* REMOVE BUTTON */}
+        <button
+          onClick={() => deleteWishlist(item._id)}
+          className="p-3 transition-all bg-gray-200 dark:bg-gray-700 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600"
+        >
+          {removing === item._id ? (
+            <span className="text-sm">...</span>
+          ) : (
+            <Trash2 size={20} className="text-red-600" />
+          )}
+        </button>
       </div>
     </motion.div>
   );

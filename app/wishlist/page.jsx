@@ -1,8 +1,7 @@
 "use client";
-import WishlistInfo from "./WishlisetInfo";
 
-export default function Wishlist() {
-  // Server-side auth check
+import WishlistPage from "./WishlistPage";
 
-  return <WishlistInfo />;
+export default function WPage() {
+  return <WishlistPage />;
 }
