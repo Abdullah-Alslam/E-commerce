@@ -42,6 +42,7 @@ export default function LoginForm() {
       setTimeout(() => router.push("/"), 500);
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
