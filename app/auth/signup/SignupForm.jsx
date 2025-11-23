@@ -37,7 +37,7 @@ export default function SignupForm() {
       if (res.status === 201) {
         const { role } = res.data;
         localStorage.setItem("userRole", role);
-        toast.success(`Account created! Role: ${role}`);
+        toast.success(`Registering successful!`);
         setTimeout(() => router.push("/auth/login"), 900);
       }
     } catch (err) {
