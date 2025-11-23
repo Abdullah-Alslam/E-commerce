@@ -20,6 +20,7 @@ export default function LoginForm() {
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
+
   // HandleSubmit
   async function handleSubmit(e) {
     e.preventDefault();
@@ -28,8 +29,10 @@ export default function LoginForm() {
     setLoading(true);
     try {
       const res = await axios.post("/api/login", form);
-      console.log(res);
+
       const token = res.data.token;
+
+      // Save token in cookies
       cookie.set("token", token, {
         path: "/",
         sameSite: "lax",
@@ -38,9 +41,13 @@ export default function LoginForm() {
         maxAge: 7 * 24 * 60 * 60,
       });
 
-      console.log("Token saved:", token);
       toast.success("Login successful!");
-      setTimeout(() => router.push("/"), 900);
+
+      // 🟢 أهم خطوة — اجبار Next.js على قراءة الكوكيز الجديدة
+      router.refresh();
+
+      // ثم الانتقال للصفحة الرئيسية أو صفحة الحساب
+      setTimeout(() => router.push("/"), 500);
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
     } finally {
@@ -51,6 +58,7 @@ export default function LoginForm() {
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white dark:from-neutral-900 dark:to-[#050507] px-4 py-12">
         <div className="w-full max-w-md bg-white/80 dark:bg-[#0b0c0f]/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6 sm:p-8">
           {/* Header */}
