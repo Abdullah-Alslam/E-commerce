@@ -101,7 +101,6 @@ Optimized for:
 git clone https://github.com/yourusername/e-commerce.git
 cd e-commerce
 
-``` ADMIN-ACCOUNT
 
 
 ````
