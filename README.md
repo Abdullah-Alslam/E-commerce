@@ -16,6 +16,10 @@ Live Preview 👉 **https://e-commerce-two-liart-4fbqvqbaro.vercel.app/**
 - Address management
 - Security page for updating password
 
+### 👤 Admin Account (Signup)
+
+- Email: admin@gmail.com
+
 ### ❤️ Wishlist
 
 - Add/remove items
@@ -99,5 +103,5 @@ cd e-commerce
 
 ``` ADMIN-ACCOUNT
 
-Email: admin@gmail.com
+
 ````
