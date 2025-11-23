@@ -42,11 +42,7 @@ export default function LoginForm() {
       });
 
       toast.success("Login successful!");
-
-      // 🟢 أهم خطوة — اجبار Next.js على قراءة الكوكيز الجديدة
       router.refresh();
-
-      // ثم الانتقال للصفحة الرئيسية أو صفحة الحساب
       setTimeout(() => router.push("/"), 500);
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
