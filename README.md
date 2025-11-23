@@ -18,7 +18,7 @@ Live Preview 👉 **https://e-commerce-two-liart-4fbqvqbaro.vercel.app/**
 
 ### 👤 Admin Account (Signup)
 
-- Email: admin@gmail.com
+- Email: endsWith("@admin.com")
 
 ### ❤️ Wishlist
 

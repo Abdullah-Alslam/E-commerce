@@ -3,8 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import Cookie from "cookie-universal";
 import { useRouter } from "next/navigation";
 import InputField from "../../components/ui/InputField";
@@ -16,23 +15,20 @@ export default function LoginForm() {
   const cookie = Cookie();
   const router = useRouter();
 
-  // HandleChange
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  // HandleSubmit
   async function handleSubmit(e) {
     e.preventDefault();
     if (!form.email || !form.password) return toast.error("Fill all fields");
 
     setLoading(true);
+
     try {
       const res = await axios.post("/api/login", form);
-
       const token = res.data.token;
 
-      // Save token in cookies
       cookie.set("token", token, {
         path: "/",
         sameSite: "lax",
@@ -40,7 +36,7 @@ export default function LoginForm() {
         secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60,
       });
-
+      console.log(res);
       toast.success("Login successful!");
       router.refresh();
       setTimeout(() => router.push("/"), 500);
@@ -53,11 +49,8 @@ export default function LoginForm() {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white dark:from-neutral-900 dark:to-[#050507] px-4 py-12">
         <div className="w-full max-w-md bg-white/80 dark:bg-[#0b0c0f]/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6 sm:p-8">
-          {/* Header */}
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               MyWebsite
@@ -70,7 +63,6 @@ export default function LoginForm() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <InputField
               label="Email"
@@ -106,7 +98,6 @@ export default function LoginForm() {
             </button>
           </form>
 
-          {/* Footer */}
           <div className="mt-4 text-sm text-center text-gray-600 dark:text-gray-300">
             Don't have an account?{" "}
             <span

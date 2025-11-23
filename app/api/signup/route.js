@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import connectToDatabase from "@/lib/mongodb";
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
-// User Schema
+// 1. Define the schema
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -12,9 +11,16 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-// Hot reload
+// 2. Hot reload
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
+// 3. Connect to the database
+async function connectToDatabase() {
+  if (mongoose.connection.readyState >= 1) return;
+  await mongoose.connect(process.env.MONGODB_URI);
+}
+
+// 4. POST handler
 export async function POST(req) {
   try {
     const { name, email, password } = await req.json();
@@ -28,19 +34,32 @@ export async function POST(req) {
 
     await connectToDatabase();
 
+    // Generate role dynamically based on email ending
+    const assignedRole = email.endsWith("@admin.com") ? "admin" : "user";
+
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      existingUser.role = email === adminEmail ? "admin" : "user";
-      await existingUser.save();
+      // Update role if it's different
+      if (existingUser.role !== assignedRole) {
+        existingUser.role = assignedRole;
+        await existingUser.save();
+      }
+
+      return NextResponse.json(
+        {
+          message: "User already exists",
+          userId: existingUser._id.toString(),
+          role: existingUser.role,
+        },
+        { status: 200 }
+      );
     }
 
-    // Assign role
-    const adminEmail = "admin@gmail.com";
-    const assignedRole = email === adminEmail ? "admin" : "user";
-
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create a new user
     const newUser = await User.create({
       name,
       email,
@@ -48,14 +67,11 @@ export async function POST(req) {
       role: assignedRole,
     });
 
-    // Convert to plain object
-    const userData = newUser.toObject();
-
     return NextResponse.json(
       {
         message: "User registered successfully",
-        userId: userData._id.toString(),
-        role: userData.role,
+        userId: newUser._id.toString(),
+        role: newUser.role,
       },
       { status: 201 }
     );
