@@ -30,10 +30,8 @@ export async function POST(req) {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already exists" },
-        { status: 400 }
-      );
+      existingUser.role = email === adminEmail ? "admin" : "user";
+      await existingUser.save();
     }
 
     // Assign role
